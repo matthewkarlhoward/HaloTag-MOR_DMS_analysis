@@ -12,7 +12,6 @@ library(patchwork)
 library(pheatmap)
 
 
-install.packages("pak")
 library(pak)
 pak::pak("jbengler/tidyheatmaps")
 library(tidyheatmaps)
@@ -65,7 +64,6 @@ mor_scores$is.wt = mor_scores$mutation_type == "S"
 ```
 # import sequence
 ```{r}
-
 mor_wt = "MDSSAAPTNASNCTDALAYSSCSPAPSPGSWVNLSHLDGNLSDPCGPNRTDLGGRDSLCPPTGSPSMITAITIMALYSIVCVVGLFGNFLVMYVIVRYTKMKTATNIYIFNLALADALATSTLPFQSVNYLMGTWPFGTILCKIVISIDYYNMFTSIFTLCTMSVDRYIAVCHPVKALDFRTPRNAKIINVCNWILSSAIGLPVMFMATTKYRQGSIDCTLTFSHPTWYWENLLKICVFIFAFIMPVLIITVCYGLMILRLKSVRMLSGSKEKDRNLRRITRMVLVVVAVFIVCWTPIHIYVIIKALVTIPETTFQTVSWHFCIALGYTNSCLNPVLYAFLDENFKRCFREFCIPTSSNIEQQNSTRIRQNTRDHPSTANTVDRTNHQLENLEAETAPLP"
 ```
 
@@ -493,5 +491,3 @@ mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_
 # create a new df from mor_score_minimal and calculate the absolute sum of the scores 
 
 ```
-
-
