@@ -2,3 +2,495 @@
 title: "HaloTag-MOR exploration"
 output: html_notebook
 ---
+#packages and utils
+```{r}
+library(tidyverse)
+library(tidyr)
+library(bio3d)
+library(zoo)
+library(patchwork)
+library(pheatmap)
+
+
+install.packages("pak")
+library(pak)
+pak::pak("jbengler/tidyheatmaps")
+library(tidyheatmaps)
+
+
+source("scripts/dms_analysis_utilities.R")
+```
+
+# import Enrich2 score files and annotate
+```{r}
+
+mor_scores_file = "data/DMS/main_identifiers_scores.tsv"
+
+mor_variantscore_colnames <- c("hgvs", 
+                               "SE_dms_1", "epsilon_dms_1", "score_dms_1",
+                               "SE_dms_2", "epsilon_dms_2", "score_dms_2",
+                               "SE_dms_3", "epsilon_dms_3", "score_dms_3",
+                               "SE_dms_4", "epsilon_dms_4", "score_dms_4",
+                               "SE_dms_5", "epsilon_dms_5", "score_dms_5",
+                               "SE_dms_6", "epsilon_dms_6", "score_dms_6",
+                               "SE_dms_7", "epsilon_dms_7", "score_dms_7",
+                               "SE_dms_8", "epsilon_dms_8", "score_dms_8",
+                               "SE_dms_9", "epsilon_dms_9", "score_dms_9",
+                               "SE_dms_abundance", "epsilon_dms_abundance", "score_dms_abundance",
+                               "SE_dms_internalization", "epsilon_dms_internalization", "score_dms_internalization",
+                               "SE_dms_surface", "epsilon_dms_surface", "score_dms_surface")
+
+mor_variantscore_coltypes <- c("hgvs", 
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric",
+                               "numeric", "numeric", "numeric")
+
+
+mor_scores <- read_delim(mor_scores_file, 
+                         col_names = mor_variantscore_colnames, 
+                         skip=3)
+
+mor_scores <- process_hgvs_df(mor_scores)
+
+mor_scores$is.wt = mor_scores$mutation_type == "S"
+```
+# import sequence
+```{r}
+
+mor_wt = "MDSSAAPTNASNCTDALAYSSCSPAPSPGSWVNLSHLDGNLSDPCGPNRTDLGGRDSLCPPTGSPSMITAITIMALYSIVCVVGLFGNFLVMYVIVRYTKMKTATNIYIFNLALADALATSTLPFQSVNYLMGTWPFGTILCKIVISIDYYNMFTSIFTLCTMSVDRYIAVCHPVKALDFRTPRNAKIINVCNWILSSAIGLPVMFMATTKYRQGSIDCTLTFSHPTWYWENLLKICVFIFAFIMPVLIITVCYGLMILRLKSVRMLSGSKEKDRNLRRITRMVLVVVAVFIVCWTPIHIYVIIKALVTIPETTFQTVSWHFCIALGYTNSCLNPVLYAFLDENFKRCFREFCIPTSSNIEQQNSTRIRQNTRDHPSTANTVDRTNHQLENLEAETAPLP"
+```
+
+#import external data
+```{r}
+# import fortifications:
+
+# import alpha missens .tsv file
+mor_alpha_missense = read_tsv("data/alphamissense_OPRM_HUMAN.tsv")
+
+# import csv of GPCRdb numbers
+mor_gpcrdb = read.csv("data/GPCRdb_OPRM1_table.csv")
+
+# import csv of conservation scores for non-olfactory class A
+mor_conservation = read.csv("data/conservation_classA_nonolfactory_GPCRdb.csv")
+
+# import gnomAD data csv
+mor_gnomad = read.csv("data/gnomAD_OPRM1.csv")
+
+# import atom distance to DAMGO (closest atom of ligand to atom of resi)
+mor_damgo_distances = read.csv("data/damgo_ATOM_distances.csv")
+
+# import G alpha distances (CA to CA)
+mor_galpha_distances = read.csv("data/ga_CA_distances.csv")
+```
+
+#merge external data
+# TODO: recalculate the Galpha distances to the MOR stucture and join to mor_scores, make the gnomad interpretable and join to mor_scores
+```{r}
+# join auxiliary data to the mor_scores datafame
+
+# join the mor_gpcrdb to mor_scores by the pos column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, mor_gpcrdb, by = c("pos" = "pos"))
+
+# join the mor_conservation to mor_scores by the GPCRdb column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, mor_conservation, by = c("GPCRdb" = "GPCRdb"))
+
+# join the mor_alpha_missense to mor_scores by the hgvs column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, mor_alpha_missense, by = c("hgvs" = "hgvs"))
+
+# join the mor_damgo_distances to mor_scores by the pos column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, mor_damgo_distances, by = c("pos" = "pos"))
+```
+
+#data annotations
+```{r}
+# add a new column to mor_scores called motif and fill every row with NA
+# then fill rows corresponding to the following motifs and residue numbers
+# create a new column called motifs in mor_scores and fill with NA
+# DRY: 166-168
+# NPxxY: 334-338
+# PIF: 246, 157, 294
+# CWxP: 294-297
+# Na pocket: 116 
+# disulfide: 142,219
+# waters: 148, 223, 297
+# TSS:356,357,358
+# phospho: 365, 366, 372, 385, 396
+# glyco: N40
+
+mor_scores$motif = NA
+
+# now fill motif column with motif name for pos above
+mor_scores[mor_scores$pos %in% c(166, 167, 168), "motif"] = "DRY"
+mor_scores[mor_scores$pos %in% c(334, 335, 336, 337, 338), "motif"] = "NPxxY"
+mor_scores[mor_scores$pos %in% c(246, 157, 294), "motif"] = "PIF"
+mor_scores[mor_scores$pos %in% c(294, 295, 296, 297), "motif"] = "CWxP"
+mor_scores[mor_scores$pos %in% c(116), "motif"] = "Na+ pocket"
+mor_scores[mor_scores$pos %in% c(142, 219), "motif"] = "disulfide"
+mor_scores[mor_scores$pos %in% c(149, 223, 297), "motif"] = "waters"
+mor_scores[mor_scores$pos %in% c(356, 357, 358), "motif"] = "TSS"
+mor_scores[mor_scores$pos %in% c(377, 378, 379, 380, 381), "motif"] = "STANT"
+mor_scores[mor_scores$pos %in% c(365, 366, 372, 385, 396), "motif"] = "phospho"
+mor_scores[mor_scores$pos %in% c(40), "motif"] = "glyco"
+
+# add columns for amino acid properties size, charge, etc
+# https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
+
+# polarity
+nonpolar<- c('F','W','I','L','M', 'V','C','A','G','P')
+polar<- c('N','Q','S','H','Y','T','R','K','D','E')
+
+#charge
+charged<- c('K','R','H','D','E')
+uncharged<- c('Y','S','T','N','Q')
+
+#aromaticity
+aromatic<- c('F','W','Y','H')
+nonaromatic<- c('R','K','D','E','S','T','N','C','P','A','G','I','L','M','V')
+
+# h-bonding
+donor<- c('R','K','W')
+acceptor<- c('D','E')
+both<- c('N','Q','S','T','Y','H')
+none<- c('A','C','G','I','L','M','F','P','V')
+
+#hydropathy
+hydrophobic<- c('F','W','I','L','M', 'V','C','A')
+hydrophilic<- c('N','Q','D','E','K','R')
+neutral<- c('Y','H', 'P', 'G', 'S','T')
+
+#size
+very_large<- c('F','W','Y')
+large<- c('R','K','I','L','M')
+medium<- c('V','H','Q','E')
+small<- c('D','N','C','P','T')
+very_small<- c('A','G','S')
+
+#chemistry 
+aliphatic<- c('V','A','L','I')
+sulfur<- c('C','M')
+hydroxyl<- c('S','T','Y')
+basic<- c('K','R','H')
+acidic<- c('D','E')
+amide<- c('N','Q')
+
+
+mor_scores <- mor_scores %>%
+  mutate(aromaticity = ifelse(variants %in% aromatic, 'aromatic', 'nonaromatic'))
+mor_scores <- mor_scores %>%
+  mutate(polarity = ifelse(variants %in% polar, 'polar', 'nonpolar'))
+mor_scores <- mor_scores %>%
+  mutate(charge = ifelse(variants %in% charged, 'charged', 'uncharged'))
+mor_scores <- mor_scores %>%
+  mutate(h_bonding = case_when(
+    variants %in% donor ~ 'donor',
+    variants %in% acceptor ~ 'acceptor',
+    variants %in% both ~ 'both',
+    variants %in% none ~ 'none',
+    TRUE ~ 'unknown'  # add this line to handle unexpected values
+  ))
+mor_scores <- mor_scores %>%
+  mutate(hydropathy = case_when(
+    variants %in% hydrophobic ~ 'hydrophobic',
+    variants %in% hydrophilic ~ 'hydrophilic',
+    variants %in% neutral ~ 'neutral',
+    TRUE ~ 'unknown'  # add this line to handle unexpected values
+  ))
+mor_scores <- mor_scores %>%
+  mutate(size = case_when(
+    variants %in% very_large ~ 'hydrophobic',
+    variants %in% large ~ 'hydrophilic',
+    variants %in% medium ~ 'neutral',
+    variants %in% small ~ 'small',
+    variants %in% very_small ~ 'very_small',
+    TRUE ~ 'unknown'  # add this line to handle unexpected values
+  ))
+mor_scores <- mor_scores %>%
+  mutate(chemistry = case_when(
+    variants %in% aliphatic ~ 'aliphatic',
+    variants %in% sulfur ~ 'sulfur',
+    variants %in% hydroxyl ~ 'hydroxyl',
+    variants %in% basic ~ 'basic',
+    variants %in% acidic ~ 'acidic',
+    variants %in% amide ~ 'amide',
+    TRUE ~ 'unknown'  # add this line to handle unexpected values
+  ))
+
+mor_scores <- mor_scores %>% filter(mutation_type != "X")
+
+```
+
+# TODO: pull in non-DAMGO structures
+```{r}
+# pull in assorted pdb structures
+damgo_8efq <- read.pdb("structures/8EFQ.pdb")
+alphafold_active <- read.pdb("structures/alphafold_hmor_active.pdb")
+alphafold_inactive <- read.pdb("structures/alphafold_hmor_inactive.pdb")
+```
+
+#heatmaps
+```{r}
+dms6_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_6,
+             annotation_col = c(wt_aa, SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             treeheight_row =50,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms6",
+             filename = "output/plots/dms6_heatmap_annotated.pdf"
+)
+
+dms5_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_5,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms5",
+             filename = "output/plots/dms5_heatmap_annotated.pdf"
+)
+
+dms4_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_4,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms4",
+             filename = "output/plots/dms4_heatmap_annotated.pdf"
+)
+
+dms3_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_3,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms3",
+             filename = "output/plots/dms3_heatmap_annotated.pdf"
+)
+
+dms2_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_2,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms2",
+             filename = "output/plots/dms2_heatmap_annotated.pdf"
+)
+
+dms1_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_1,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "dms1",
+             filename = "output/plots/dms1_heatmap_annotated.pdf"
+)
+
+surface_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_surface,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("red","white","blue"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "surface",
+             filename = "output/plots/surface_heatmap_annotated.pdf"
+)
+
+internalization_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_internalization,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             scale = "none",
+             colors = c("red","white","blue"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             main = "internalization",
+             filename = "output/plots/internalization_heatmap_annotated.pdf"
+)
+
+abundance_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = score_dms_abundance,
+             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             
+             scale = "none",
+             colors = c("red","white","blue"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 10,
+             height = 10,
+             main = "abundance",
+             filename = "output/plots/abundance_heatmap_annotated.pdf"
+)
+
+```
+
+#density plots
+```{r}
+#plot densities of all scores
+
+# Function to create density plots
+create_density_plot <- function(data, score_column, label) {
+  ggplot(data) +
+    geom_density(aes(x = !!sym(score_column), color = mutation_type)) +
+    xlab(label) +
+    ylab("Density") +
+    geom_vline(xintercept = 0, linetype = "dotted") +
+    theme_classic() +
+    labs(color = "Mutation type") +
+    xlim(-3, 3) +
+    ylim(0, 2)
+}
+
+# List to store density plots
+density_plots <- list()
+
+# Score columns and labels
+score_columns <- c("score_dms_internalization", "score_dms_surface", "score_dms_abundance", 
+                   "score_dms_1", "score_dms_2", "score_dms_3", "score_dms_4", "score_dms_5", "score_dms_6")
+
+labels <- c("internalization", "surface", "abundance", "dms1", "dms2", "dms3", "dms4", "dms5", "dms6")
+
+# Create density plots and store them in the list
+for (i in seq_along(score_columns)) {
+  density_plots[[i]] <- create_density_plot(mor_scores, score_columns[i], labels[i])
+}
+
+# Arrange plots using patchwork
+combined_plots <- wrap_plots(density_plots, ncol = 3)
+
+# Save the combined plot
+ggsave("output/plots/master_density_plots.pdf", combined_plots, width = 10, height = 10)
+
+```
+
+#2d scatters with coloring
+```{r}
+# make scatter plots of all scores against all scores
+plot_mor_scores <- function(data, x_var, y_var, color_var) {
+  ggplot(data) +
+    geom_point(aes(x = {{x_var}},
+                   y = {{y_var}},
+                   color = !!sym(color_var))) +
+    theme_classic() + 
+    labs(color = color_var) +
+    xlim(-3, 3) +
+    ylim(-3, 3)
+}
+
+# Define the list of variables
+variables <- c("score_dms_surface", "score_dms_internalization", "score_dms_abundance", 
+               "score_dms_1", "score_dms_2", "score_dms_3", 
+               "score_dms_4", "score_dms_5", "score_dms_6")
+
+# Define the list of color variables
+color_variables <- c("motif", "conservation", "mutation_type", "alphamissense_classification", "SSE")
+
+# Iterate over all combinations of x, y, and color variables
+for (color_var in color_variables) {
+  # Initialize an empty list to store scatter plots
+  scatter_plots <- list()
+
+  for (x_var in variables) {
+    for (y_var in variables) {
+      # Create the scatter plot and store it in the list
+      scatter_plot <- plot_mor_scores(data = mor_scores, 
+                                      x_var = !!sym(x_var), 
+                                      y_var = !!sym(y_var),
+                                      color_var = sym(color_var))
+      scatter_plots <- c(scatter_plots, list(scatter_plot))
+    }
+  }
+
+  # Combine the scatter plots using patchwork
+  grid_plot <- wrap_plots(scatter_plots, ncol = 9)
+
+  # Display the grid plot
+  grid_plot
+
+  # Save the grid plot as a PDF with a dynamic filename
+  ggsave(paste0("output/plots/master_scatter_", color_var, ".pdf"), grid_plot, width = 40, height = 40)
+}
+```
+
+#3d scatters
+```{r}
+# make a 3d scatter of the internalization, dms_3 and surface scores
+install.packages("scatterplot3d")
+library(scatterplot3d)
+mor_3d <- scatterplot3d(mor_scores %>% filter(mutation_type != "X") %>% select(score_dms_internalization, score_dms_3, score_dms_surface), pch = 16, color = "blue", main = "3D Scatterplot of Internalization, DMS3 and Surface Scores")
+
+install.packages("plotly")
+library(plotly)
+plot_ly(mor_scores %>% filter(mutation_type != "X"), x = ~score_dms_internalization, y = ~score_dms_3, z = ~score_dms_surface, color = ~motif, colors = "Set1", type = "scatter3d", mode = "markers", marker = list(size = 3))
+
+# create a new df from mor_scores with the pos, each of the 9 dms scores, motif, mutation_type, and variants columns
+mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_dms_3, score_dms_4, score_dms_5, score_dms_6, score_dms_surface, score_dms_internalization, score_dms_abundance, motif, mutation_type, variants, SSE)
+
+# create a new df from mor_score_minimal and calculate the absolute sum of the scores 
+
+```
+
+
