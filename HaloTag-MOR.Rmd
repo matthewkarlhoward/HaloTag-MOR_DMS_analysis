@@ -228,6 +228,7 @@ mor_scores <- mor_scores %>% filter(mutation_type != "X")
 
 ```
 
+#import structures
 # TODO: pull in non-DAMGO structures
 ```{r}
 # pull in assorted pdb structures
