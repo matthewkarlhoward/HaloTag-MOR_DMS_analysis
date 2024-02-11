@@ -25,7 +25,6 @@ source("scripts/dms_analysis_utilities.R")
 # import Enrich2 score files and annotate
 
 ```{r}
-
 mor_scores_file = "data/DMS/main_identifiers_scores.tsv"
 
 mor_variantscore_colnames <- c("hgvs", 
@@ -66,10 +65,10 @@ mor_scores <- process_hgvs_df(mor_scores)
 mor_scores$is.wt = mor_scores$mutation_type == "S"
 
 # remove row for mutation_type "X" from mor_scores
-mor_scores = mor_scores %>% filter(mutation_type != "X")
+mor_scores <- mor_scores %>% filter(mutation_type != "X")
 
-# remove colums for SE and epsilon
-mor_scores = mor_scores %>% select(-ends_with("SE"), -ends_with("epsilon"))
+# make new df from mor_scores with only the score_dms columns, pos, len, mutation_type, and variants
+mor_scores <- mor_scores %>% select(hgvs, pos, len, mutation_type, variants, starts_with("score_dms"))
 ```
 
 # import sequence
@@ -158,6 +157,8 @@ mor_scores[mor_scores$pos %in% c(356, 357, 358), "motif"] = "TSS"
 mor_scores[mor_scores$pos %in% c(377, 378, 379, 380, 381), "motif"] = "STANT"
 mor_scores[mor_scores$pos %in% c(365, 366, 372, 385, 396), "motif"] = "phospho"
 mor_scores[mor_scores$pos %in% c(40), "motif"] = "glyco"
+mor_scores[mor_scores$pos %in% c(103, 170, 171, 174, 175, 178, 179, 181, 260, 261, 265, 266, 266, 270, 272, 273, 279, 280, 342, 343, 344), "motif"] = "Ga-contact"
+
 
 # add columns for amino acid properties size, charge, etc
 # https://www.imgt.org/IMGTeducation/Aide-memoire/_UK/aminoacids/IMGTclasses.html
@@ -246,8 +247,8 @@ mor_scores <- mor_scores %>% filter(mutation_type != "X")
 
 ```
 
-#import structures \# TODO: pull in non-DAMGO structures
-
+#import structures 
+# TODO: pull in non-DAMGO structures
 ```{r}
 # pull in assorted pdb structures
 damgo_8efq <- read.pdb("structures/8EFQ.pdb")
@@ -445,6 +446,115 @@ combined_plots <- wrap_plots(density_plots, ncol = 3)
 # Save the combined plot
 ggsave("output/plots/master_density_plots.pdf", combined_plots, width = 10, height = 10)
 
+###
+
+library(ggridges)
+# Function to create density plots
+create_density_plot <- function(data, score_column, label) {
+    data <- data %>% filter(mutation_type %in% c("M", "S"))  
+  ggplot(data) +
+    geom_density(aes(x = !!sym(score_column), color = motif)) +
+    xlab(label) +
+    ylab("Density") +
+    geom_vline(xintercept = 0, linetype = "dotted") +
+    theme_classic() +
+    labs(color = "motif") +
+    xlim(-3.5, 3.5) +
+    ylim(0, 2.5)
+}
+
+# List to store density plots
+density_plots <- list()
+
+# Score columns and labels
+score_columns <- c("score_dms_internalization", "score_dms_surface", "score_dms_abundance", 
+                   "score_dms_1", "score_dms_2", "score_dms_3", "score_dms_4", "score_dms_5", "score_dms_6")
+
+labels <- c("internalization", "surface", "abundance", "dms1", "dms2", "dms3", "dms4", "dms5", "dms6")
+
+# Create density plots and store them in the list
+for (i in seq_along(score_columns)) {
+  density_plots[[i]] <- create_density_plot(mor_scores, score_columns[i], labels[i])
+}
+
+# Arrange plots using patchwork and collect guides
+combined_plots <- wrap_plots(density_plots, ncol = 3) + plot_layout(guides = "collect")
+
+# Save the combined plot
+ggsave("output/plots/master_density_plots_motif.pdf", combined_plots, width = 10, height = 10)
+
+####
+
+# create_density_plot <- function(data, score_column, label) {
+#   data <- data %>% filter(mutation_type %in% c("M", "S"))
+#   
+#   ggplot(data) +
+#     geom_density_ridges(aes(x = !!sym(score_column), y = motif, fill = motif),
+#                         alpha = 0.7, scale = 0.9) +
+#     xlab(label) +
+#     ylab("Density") +
+#     geom_vline(xintercept = 0, linetype = "dotted") +
+#     theme_classic() +
+#     xlim(-3.5, 3.5)
+# }
+
+create_density_plot <- function(data, score_column, label) {
+  # Check if mutation_type and score_column are present in data
+  # if (!all(c("mutation_type", score_column) %in% names(data))) {
+  #   stop("Mutation_type or specified score_column not found in data.")
+  # }
+  
+  # Filter data for mutation_type "S"
+  data_s <- data %>% filter(mutation_type == "S")
+  
+  # # Check if there is any data for mutation_type "S"
+  # if (nrow(data_s) == 0) {
+  #   stop("No data available for mutation_type 'S'.")
+  # }
+  
+  # Calculate mean and standard deviation for mutation_type "S"
+  mean_s <- mean(data_s[[score_column]], na.rm = TRUE)
+  sd_s <- sd(data_s[[score_column]], na.rm = TRUE)
+  
+  ggplot(data %>% filter(mutation_type == "M")) +
+    geom_density_ridges(aes(x = !!sym(score_column), y = motif, fill = motif),
+                        alpha = 0.7, scale = 0.9) +
+    xlab(label) +
+    ylab("Density") +
+    #geom_vline(xintercept = 0, linetype = "dotted") +
+    geom_vline(xintercept = mean_s, linetype = "dotted") +
+    geom_vline(xintercept = mean_s - sd_s, linetype = "dotted", color = "red") +
+    geom_vline(xintercept = mean_s + sd_s, linetype = "dotted", color = "red") +
+    theme_classic() +
+    xlim(-3.5, 3.5)
+}
+
+# Example usage:
+# create_density_plot(your_data_frame, "your_score_column", "Your Label")
+
+
+# List to store density plots
+density_plots <- list()
+
+# Score columns and labels
+score_columns <- c("score_dms_internalization", "score_dms_surface", "score_dms_abundance", 
+                   "score_dms_1", "score_dms_2", "score_dms_3", "score_dms_4", "score_dms_5", "score_dms_6")
+
+labels <- c("internalization", "surface", "abundance", "dms1", "dms2", "dms3", "dms4", "dms5", "dms6")
+
+# Create density plots and store them in the list
+for (i in seq_along(score_columns)) {
+  density_plots[[i]] <- create_density_plot(mor_scores, score_columns[i], labels[i])
+}
+
+# Arrange plots using patchwork and collect guides
+combined_plots <- wrap_plots(density_plots, ncol = 3) + plot_layout(guides = "collect")
+
+# Save the combined plot
+ggsave("output/plots/master_density_plots_motif.pdf", combined_plots, width = 10, height = 10)
+
+###
+
 ```
 
 #2d scatters with coloring
@@ -522,7 +632,7 @@ mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_
 # Define a function for creating a scatter plot with distances
 mor_scores_missense <- mor_scores %>% filter(mutation_type %in% c("M", "S"))
 
-full_scatter_distance_summed_signed <- function(data, x_var, y_var, y_var_for_line, output_file1, output_file2) {
+full_scatter_distance_summed_signed <- function(data, x_var, y_var, y_var_for_line, output_file) {
   # Define labels for x and y variables based on their names
   x_var_label <- x_var
   y_var_label <- y_var
@@ -564,7 +674,7 @@ full_scatter_distance_summed_signed <- function(data, x_var, y_var, y_var_for_li
   data$distance <- -(a * data[[x_var]] + b * data[[y_var]] + c) / sqrt(a^2 + b^2) 
 
   # Create a dataFrame for distances
-  distance_df <- data.frame(hgvs = data$hgvs, distance = data$distance, pos = data$pos, is.wt = data$is.wt, variants = data$variants)
+  distance_df <- data.frame(hgvs = data$hgvs, distance = data$distance, pos = data$pos, is.wt = data$is.wt, variants = data$variants, motif = data$motif)
   # Remove rows with missing distances in the distance_df
   distance_df <- distance_df %>% filter(!is.na(distance))
   
@@ -605,17 +715,50 @@ full_scatter_distance_summed_signed <- function(data, x_var, y_var, y_var_for_li
 above_sum_df$pos <- as.numeric(above_sum_df$pos)  # Convert 'pos' to numeric
 below_sum_df$pos <- as.numeric(below_sum_df$pos)  # Convert 'pos' to numeric
 
+
+above_sum_df$motif = NA
+
+# now fill motif column with motif name for pos above
+above_sum_df[above_sum_df$pos %in% c(166, 167, 168), "motif"] = "DRY"
+above_sum_df[above_sum_df$pos %in% c(334, 335, 336, 337, 338), "motif"] = "NPxxY"
+above_sum_df[above_sum_df$pos %in% c(246, 157, 294), "motif"] = "PIF"
+above_sum_df[above_sum_df$pos %in% c(294, 295, 296, 297), "motif"] = "CWxP"
+above_sum_df[above_sum_df$pos %in% c(116), "motif"] = "Na+ pocket"
+above_sum_df[above_sum_df$pos %in% c(142, 219), "motif"] = "disulfide"
+above_sum_df[above_sum_df$pos %in% c(149, 223, 297), "motif"] = "waters"
+above_sum_df[above_sum_df$pos %in% c(356, 357, 358), "motif"] = "TSS"
+above_sum_df[above_sum_df$pos %in% c(377, 378, 379, 380, 381), "motif"] = "STANT"
+above_sum_df[above_sum_df$pos %in% c(365, 366, 372, 385, 396), "motif"] = "phospho"
+above_sum_df[above_sum_df$pos %in% c(40), "motif"] = "glyco"
+above_sum_df[above_sum_df$pos %in% c(103, 170, 171, 174, 175, 178, 179, 181, 260, 261, 265, 266, 266, 270, 272, 273, 279, 280, 342, 343, 344), "motif"] = "Ga-contact"
+
+below_sum_df$motif = NA
+
+# now fill motif column with motif name for pos below
+below_sum_df[below_sum_df$pos %in% c(166, 167, 168), "motif"] = "DRY"
+below_sum_df[below_sum_df$pos %in% c(334, 335, 336, 337, 338), "motif"] = "NPxxY"
+below_sum_df[below_sum_df$pos %in% c(246, 157, 294), "motif"] = "PIF"
+below_sum_df[below_sum_df$pos %in% c(294, 295, 296, 297), "motif"] = "CWxP"
+below_sum_df[below_sum_df$pos %in% c(116), "motif"] = "Na+ pocket"
+below_sum_df[below_sum_df$pos %in% c(142, 219), "motif"] = "disulfide"
+below_sum_df[below_sum_df$pos %in% c(149, 223, 297), "motif"] = "waters"
+below_sum_df[below_sum_df$pos %in% c(356, 357, 358), "motif"] = "TSS"
+below_sum_df[below_sum_df$pos %in% c(377, 378, 379, 380, 381), "motif"] = "STANT"
+below_sum_df[below_sum_df$pos %in% c(365, 366, 372, 385, 396), "motif"] = "phospho"
+below_sum_df[below_sum_df$pos %in% c(40), "motif"] = "glyco"
+below_sum_df[below_sum_df$pos %in% c(103, 170, 171, 174, 175, 178, 179, 181, 260, 261, 265, 266, 266, 270, 272, 273, 279, 280, 342, 343, 344), "motif"] = "Ga-contact"
+
 distance_plot_above <- ggplot(data = above_sum_df %>%
          arrange(abs_sum_distance), aes(x = log(as.numeric(reorder(pos, desc(abs_sum_distance)))), y = abs_sum_distance)) +
     labs(x = "Rank", y = "Sum distances") +
-    geom_point(size = 3, shape = 21) +
+    geom_point(aes(fill = motif), size = 3, shape = 21) +
     scale_x_continuous(labels = c(1, 10, 100), 
                        breaks = log(c(1, 10, 100)), 
                        expand = c(.025, .025)) +
     ggtitle(y_var_label) +
     theme_options +
     theme(panel.background = element_rect(fill = "white"),
-          axis.title = element_blank()) +
+          ) +
     scale_y_continuous(limits = c(0, max(above_sum_df$abs_sum_distance)), expand = c(0.07,0)) +
     scale_color_manual(values = c("none" = rgb(0, 0, 0, alpha=0), "ecl" = rgb(0, 0, 0, alpha=0)))
 
@@ -624,67 +767,82 @@ distance_plot_below <- ggplot(data = below_sum_df %>%
          arrange(abs_sum_distance), aes(x = log(as.numeric(reorder(pos, abs_sum_distance))), y = abs_sum_distance)) +
  
   labs(x = "Rank, log-scale", y = "Sum distances") +
-  geom_point(size = 3, shape = 21) +
+  geom_point(aes(fill = motif), size = 3, shape = 21) +
   scale_x_continuous(labels = c(1, 10, 100), 
                        breaks = log(c(1, 10, 100)), 
                        expand = c(.025, .025)) +
-  #ggtitle(y_var_label) +
+  ggtitle(y_var_label) +
   theme_options +
   theme(panel.background = element_rect(fill = "white"),
-        axis.title = element_blank()) +
+        ) +
   scale_y_continuous(limits = c(min(below_sum_df$abs_sum_distance), expand = c(0, 0))) +
       scale_color_manual(values = c("none" = rgb(0, 0, 0, alpha=0), "ecl" = rgb(0, 0, 0, alpha=0))) 
 
 # For distance_plot_above
 distance_plot_above <- distance_plot_above +
-  geom_text_repel(data = head(above_sum_df, 20), aes(label = pos), box.padding = 0.1, point.padding = 0.1)
+  geom_label_repel(
+    data = above_sum_df[order(-above_sum_df$abs_sum_distance), ][1:15, ],
+    aes(label = pos),
+    box.padding = 0.5,
+    point.padding = 1,
+    size = 2,
+    max.overlaps = Inf
+  )
+
 
 # For distance_plot_below
 distance_plot_below <- distance_plot_below +
-  geom_text_repel(data = tail(below_sum_df, 20), aes(label = pos), box.padding = 0.1, point.padding = 0.1)
+  geom_label_repel(
+    data = head(below_sum_df[order(below_sum_df$abs_sum_distance), ], 15),
+    aes(x = log(as.numeric(reorder(pos, abs_sum_distance))), y = abs_sum_distance, label = pos),
+    box.padding = 0.5,
+    point.padding = 1,
+    size = 2,
+    max.overlaps = Inf
+  )
 
 
-  # Arrange distance plot vertically
-  plot_arranged <- distance_plot_above / distance_plot_below
+  # Arrange distance plot vertically and collect guides
+  plot_arranged <- scatter_plot / distance_plot_above / distance_plot_below + plot_annotation(tag_levels = "a") + plot_layout(guides = "collect")
     
-  # Save the plot as an output file
-  ggsave(output_file1, scatter_plot, height = 80, width = 80, units = "mm",  dpi = 450)
-  ggsave(output_file2, plot_arranged, height = 130, width = 140, units = "mm", dpi = 450)
+
+  ggsave(output_file, plot_arranged, height = 200, width = 200, units = "mm", dpi = 450)
   # Return the distance df
   return(list(above_sum_df, below_sum_df, distance_df))
 }
 
 # Update function calls with "distance" 
-dms1_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_1",y_var_for_line = "score_dms_1", "output/plots/dms1_surf_euclidian.pdf", "output/plots/dms1_surf_euclidian_2.pdf")
+dms1_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_1",y_var_for_line = "score_dms_1", "output/plots/dms1_surf_euclidian.pdf")
 
-dms2_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_2",y_var_for_line = "score_dms_2", "output/plots/dms2_surf_euclidian.pdf", "output/plots/dms1_surf_euclidian_2.pdf")
+dms2_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_2",y_var_for_line = "score_dms_2", "output/plots/dms2_surf_euclidian.pdf")
 
-dms3_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_3",y_var_for_line = "score_dms_3", "output/plots/dms3_surf_euclidian.pdf", "output/plots/dms3_surf_euclidian_2.pdf")
+dms3_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_3",y_var_for_line = "score_dms_3", "output/plots/dms3_surf_euclidian.pdf")
 
-dms4_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_4",y_var_for_line = "score_dms_4", "output/plots/dms4_surf_euclidian.pdf", "output/plots/dms4_surf_euclidian_2.pdf")
+dms4_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_4",y_var_for_line = "score_dms_4", "output/plots/dms4_surf_euclidian.pdf")
 
-dms5_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_5",y_var_for_line = "score_dms_5", "output/plots/dms5_surf_euclidian.pdf", "output/plots/dms5_surf_euclidian_2.pdf")
+dms5_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_5",y_var_for_line = "score_dms_5", "output/plots/dms5_surf_euclidian.pdf")
 
-dms6_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_6",y_var_for_line = "score_dms_6", "output/plots/dms6_surf_euclidian.pdf", "output/plots/dms6_surf_euclidian_2.pdf")
+dms6_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_6",y_var_for_line = "score_dms_6", "output/plots/dms6_surf_euclidian.pdf")
 
-internalization_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_internalization",y_var_for_line = "score_dms_internalization", "output/plots/internalization_surf_euclidian.pdf", "output/plots/internalization_surf_euclidian_2.pdf")
+internalization_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_internalization",y_var_for_line = "score_dms_internalization", "output/plots/internalization_surf_euclidian.pdf")
 
-abundance_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_abundance",y_var_for_line = "score_dms_abundance", "output/plots/abundnace_surf_euclidian.pdf", "output/plots/abundnace_surf_euclidian_2.pdf")
-
-#store the values of dms3_surf_euclidian in a new df
-dms3_surf_euclidian_df <- dms3_surf_euclidian[[3]]
-dms3_surf_euclidian_df_above <- dms3_surf_euclidian[[1]]
-dms3_surf_euclidian_df_below <- dms3_surf_euclidian[[2]]
-dms6_surf_euclidian_df_above <- dms6_surf_euclidian[[1]]
-
-# arrange the df dms3_surf_euclidian_df_above from highest to lowest value of abs_sum_distance and create a list of the pos value of the 20 highest abs_sum_distance values
-dms3_surf_euclidian_df_above_pos <- dms3_surf_euclidian_df_above %>% arrange(desc(abs_sum_distance)) %>% head(40) %>% select(pos)
-
-#filter the more_scores_missense df to only include rows where pos is in the list of the 20 highest abs_sum_distance values
-dms3_surf_euclidian_df_above_pos_df <- mor_scores_missense %>% filter(pos %in% c(167, 77, 246, 149, 181, 274, 291, 123, 298, 132, 299, 126, 302, 159, 171, 324, 321, 328, 196, 164))
-
-# map scores onto structure
-dms3_surf_euclidian_df_above_pos_df <- map_scores_to_structure(dms3_surf_euclidian_df_above_pos_df, "score_dms_3", "output/plots/dms3_surf_euclidian_df_above_pos_df.pdf")
+abundance_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_abundance",y_var_for_line = "score_dms_abundance", "output/plots/abundnace_surf_euclidian.pdf")
+# 
+# #store the values of dms3_surf_euclidian in a new df
+# dms3_surf_euclidian_df <- dms3_surf_euclidian[[3]]
+# dms3_surf_euclidian_df_above <- dms3_surf_euclidian[[1]]
+# dms3_surf_euclidian_df_below <- dms3_surf_euclidian[[2]]
+# dms6_surf_euclidian_df_above <- dms6_surf_euclidian[[1]]
+# dms6_surf_euclidian_df_below <- dms6_surf_euclidian[[2]]
+# dms6_surf_euclidian_df_all <- dms6_surf_euclidian[[3]]
+# # arrange the df dms3_surf_euclidian_df_above from highest to lowest value of abs_sum_distance and create a list of the pos value of the 20 highest abs_sum_distance values
+# dms3_surf_euclidian_df_above_pos <- dms3_surf_euclidian_df_above %>% arrange(desc(abs_sum_distance)) %>% head(40) %>% select(pos)
+# 
+# #filter the more_scores_missense df to only include rows where pos is in the list of the 20 highest abs_sum_distance values
+# dms3_surf_euclidian_df_above_pos_df <- mor_scores_missense %>% filter(pos %in% c(167, 77, 246, 149, 181, 274, 291, 123, 298, 132, 299, 126, 302, 159, 171, 324, 321, 328, 196, 164))
+# 
+# # map scores onto structure
+# dms3_surf_euclidian_df_above_pos_df <- map_scores_to_structure(dms3_surf_euclidian_df_above_pos_df, "score_dms_3", "output/plots/dms3_surf_euclidian_df_above_pos_df.pdf")
 ```
 
 ```
