@@ -2,7 +2,9 @@
 title: "HaloTag-MOR exploration"
 output: html_notebook
 ---
+
 #packages and utils
+
 ```{r}
 library(tidyverse)
 library(tidyr)
@@ -10,7 +12,7 @@ library(bio3d)
 library(zoo)
 library(patchwork)
 library(pheatmap)
-
+library(ggrepel)
 
 library(pak)
 pak::pak("jbengler/tidyheatmaps")
@@ -21,6 +23,7 @@ source("scripts/dms_analysis_utilities.R")
 ```
 
 # import Enrich2 score files and annotate
+
 ```{r}
 
 mor_scores_file = "data/DMS/main_identifiers_scores.tsv"
@@ -61,13 +64,22 @@ mor_scores <- read_delim(mor_scores_file,
 mor_scores <- process_hgvs_df(mor_scores)
 
 mor_scores$is.wt = mor_scores$mutation_type == "S"
+
+# remove row for mutation_type "X" from mor_scores
+mor_scores = mor_scores %>% filter(mutation_type != "X")
+
+# remove colums for SE and epsilon
+mor_scores = mor_scores %>% select(-ends_with("SE"), -ends_with("epsilon"))
 ```
+
 # import sequence
+
 ```{r}
 mor_wt = "MDSSAAPTNASNCTDALAYSSCSPAPSPGSWVNLSHLDGNLSDPCGPNRTDLGGRDSLCPPTGSPSMITAITIMALYSIVCVVGLFGNFLVMYVIVRYTKMKTATNIYIFNLALADALATSTLPFQSVNYLMGTWPFGTILCKIVISIDYYNMFTSIFTLCTMSVDRYIAVCHPVKALDFRTPRNAKIINVCNWILSSAIGLPVMFMATTKYRQGSIDCTLTFSHPTWYWENLLKICVFIFAFIMPVLIITVCYGLMILRLKSVRMLSGSKEKDRNLRRITRMVLVVVAVFIVCWTPIHIYVIIKALVTIPETTFQTVSWHFCIALGYTNSCLNPVLYAFLDENFKRCFREFCIPTSSNIEQQNSTRIRQNTRDHPSTANTVDRTNHQLENLEAETAPLP"
 ```
 
 #import external data
+
 ```{r}
 # import fortifications:
 
@@ -88,10 +100,14 @@ mor_damgo_distances = read.csv("data/damgo_ATOM_distances.csv")
 
 # import G alpha distances (CA to CA)
 mor_galpha_distances = read.csv("data/ga_CA_distances.csv")
+
+#human mouse positions 
+human_mouse_positions = read.csv("data/oprm_human_mouse_pos.csv")
+
 ```
 
-#merge external data
-# TODO: recalculate the Galpha distances to the MOR stucture and join to mor_scores, make the gnomad interpretable and join to mor_scores
+#merge external data \# TODO: recalculate the Galpha distances to the MOR stucture and join to mor_scores, make the gnomad interpretable and join to mor_scores
+
 ```{r}
 # join auxiliary data to the mor_scores datafame
 
@@ -106,9 +122,13 @@ mor_scores = left_join(mor_scores, mor_alpha_missense, by = c("hgvs" = "hgvs"))
 
 # join the mor_damgo_distances to mor_scores by the pos column, keep all values in mor_scores
 mor_scores = left_join(mor_scores, mor_damgo_distances, by = c("pos" = "pos"))
+
+# join the human mouse positions to mor_scores by the pos column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, human_mouse_positions, by = c("pos" = "pos"))
 ```
 
 #data annotations
+
 ```{r}
 # add a new column to mor_scores called motif and fill every row with NA
 # then fill rows corresponding to the following motifs and residue numbers
@@ -226,8 +246,8 @@ mor_scores <- mor_scores %>% filter(mutation_type != "X")
 
 ```
 
-#import structures
-# TODO: pull in non-DAMGO structures
+#import structures \# TODO: pull in non-DAMGO structures
+
 ```{r}
 # pull in assorted pdb structures
 damgo_8efq <- read.pdb("structures/8EFQ.pdb")
@@ -236,6 +256,7 @@ alphafold_inactive <- read.pdb("structures/alphafold_hmor_inactive.pdb")
 ```
 
 #heatmaps
+
 ```{r}
 dms6_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
              rows = variants,
@@ -387,6 +408,7 @@ abundance_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M"
 ```
 
 #density plots
+
 ```{r}
 #plot densities of all scores
 
@@ -426,6 +448,7 @@ ggsave("output/plots/master_density_plots.pdf", combined_plots, width = 10, heig
 ```
 
 #2d scatters with coloring
+
 ```{r}
 # make scatter plots of all scores against all scores
 plot_mor_scores <- function(data, x_var, y_var, color_var) {
@@ -475,6 +498,7 @@ for (color_var in color_variables) {
 ```
 
 #3d scatters
+
 ```{r}
 # make a 3d scatter of the internalization, dms_3 and surface scores
 install.packages("scatterplot3d")
@@ -489,5 +513,178 @@ plot_ly(mor_scores %>% filter(mutation_type != "X"), x = ~score_dms_internalizat
 mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_dms_3, score_dms_4, score_dms_5, score_dms_6, score_dms_surface, score_dms_internalization, score_dms_abundance, motif, mutation_type, variants, SSE)
 
 # create a new df from mor_score_minimal and calculate the absolute sum of the scores 
+
+```
+
+#apply diagonal magic
+```{r}
+# full scatter, euclidian distance, waterfall plot summing distances/position for positive and negative distances
+# Define a function for creating a scatter plot with distances
+mor_scores_missense <- mor_scores %>% filter(mutation_type %in% c("M", "S"))
+
+full_scatter_distance_summed_signed <- function(data, x_var, y_var, y_var_for_line, output_file1, output_file2) {
+  # Define labels for x and y variables based on their names
+  x_var_label <- x_var
+  y_var_label <- y_var
+
+  
+  # Set the theme options for all text elements
+  theme_options <- theme(
+    panel.border = element_rect(color = "black",fill = NA, size = 1),
+    text = element_text(color = "black", family = "sans", size = 10),
+    legend.position = "right",
+    axis.line = element_blank(),
+    plot.title = element_text(hjust = 0.5, size = 10, family = "sans", color = "black"),
+    axis.text = element_text(size = 10, family = "sans", color = "black"),
+    legend.text = element_text(size = 10, family = "sans", color = "black"),
+    legend.title = element_text(size = 10, family = "sans", color = "black"),
+    plot.subtitle = element_text(size = 10, family = "sans", color = "black"),
+    plot.caption = element_text(size = 10, family = "sans", color = "black"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_blank()
+  )
+
+  # Fit a linear regression model to the data using syn mutants of y_var_for_line and surf_score
+  lm_model <- lm(data %>% filter(is.wt == TRUE) %>% dplyr::select(y_var_for_line, score_dms_surface))
+  lm_model_all <- lm(data %>% dplyr::select(y_var_for_line, score_dms_surface))
+  
+  # Obtain the coefficients (a, b, c) from the lm_model
+  a <- coef(lm_model)[2]
+  b <- -1  # Assuming b as -1 for perpendicular distance
+  c <- coef(lm_model)[1]
+ 
+  # Calculate the R-squared value from the linear regression model
+  r_squared <- summary(lm_model)$r.squared
+  r_squared_all <- summary(lm_model_all)$r.squared
+  
+  # Format the R-squared value as a string
+  r_squared_label <- paste("R-squared(syn/all) = ", round(r_squared, 2), "/", round(r_squared_all, 2))
+
+  # Calculate the signed distances from each point (x_var, y_var) to the line
+  data$distance <- -(a * data[[x_var]] + b * data[[y_var]] + c) / sqrt(a^2 + b^2) 
+
+  # Create a dataFrame for distances
+  distance_df <- data.frame(hgvs = data$hgvs, distance = data$distance, pos = data$pos, is.wt = data$is.wt, variants = data$variants)
+  # Remove rows with missing distances in the distance_df
+  distance_df <- distance_df %>% filter(!is.na(distance))
+  
+  # Identify the top 5% highest distances
+  top_5_percent_cutoff <- quantile(distance_df$distance, probs = 0.975)
+  top_5_percent_data <- distance_df %>% filter(distance >= top_5_percent_cutoff)
+  bottom_5_percent_cutoff <- quantile(distance_df$distance, probs = 0.025)
+  bottom_5_percent_data <- distance_df %>% filter(distance <= bottom_5_percent_cutoff)
+
+  # Add a "percentile" column to the input dataframe
+  data$percentile <- ifelse(data$hgvs %in% top_5_percent_data$hgvs, "top", ifelse(data$hgvs %in% bottom_5_percent_data$hgvs, "bottom", "neutral"))
+
+  # Separate distances into two data frames: below and above the best fit line
+  below_df <- distance_df[distance_df$distance < 0, ]
+  above_df <- distance_df[distance_df$distance >= 0, ]
+
+  # Calculate the absolute sum of distances by position and divide by the count
+  above_sum_df <- above_df %>%
+    group_by(pos) %>%
+    summarize(abs_sum_distance = sum((distance)) / n())
+  
+  below_sum_df <- below_df %>%
+    group_by(pos) %>%
+    summarize(abs_sum_distance = sum((distance)) / n())
+
+  # Create a scatter plot with grey color for all points and blue for "top" points
+  scatter_plot <- ggscatter(data, x = x_var, y = y_var, size = 0.5, color = "#999999") +
+    labs(x = x_var_label, y = y_var_label) +
+    theme_options + 
+    #coord_equal(1) +
+    ggtitle(paste0(x_var_label, " vs ", y_var_label, " (mis/syn dataset)\n", r_squared_label )) +
+    geom_smooth(data = data %>% filter(is.wt == TRUE), aes(x = score_dms_surface, y = !!sym(y_var_for_line)), method = "lm", color = "black", size = 0.5, fill = "black", alpha = 0.2, fullrange = TRUE) +
+    geom_point(data = data %>% filter(is.wt == TRUE), aes(x = score_dms_surface, y = !!sym(y_var_for_line)), size = 0.75, color = "black") +
+    geom_point(data = data %>% filter(percentile == "top"),aes(x = score_dms_surface, y = !!sym(y_var_for_line)), size = 0.5,color = "blue") +
+    geom_point(data = data %>% filter(percentile == "bottom"),aes(x = score_dms_surface, y = !!sym(y_var_for_line)), size = 0.5, color = "red")
+
+
+above_sum_df$pos <- as.numeric(above_sum_df$pos)  # Convert 'pos' to numeric
+below_sum_df$pos <- as.numeric(below_sum_df$pos)  # Convert 'pos' to numeric
+
+distance_plot_above <- ggplot(data = above_sum_df %>%
+         arrange(abs_sum_distance), aes(x = log(as.numeric(reorder(pos, desc(abs_sum_distance)))), y = abs_sum_distance)) +
+    labs(x = "Rank", y = "Sum distances") +
+    geom_point(size = 3, shape = 21) +
+    scale_x_continuous(labels = c(1, 10, 100), 
+                       breaks = log(c(1, 10, 100)), 
+                       expand = c(.025, .025)) +
+    ggtitle(y_var_label) +
+    theme_options +
+    theme(panel.background = element_rect(fill = "white"),
+          axis.title = element_blank()) +
+    scale_y_continuous(limits = c(0, max(above_sum_df$abs_sum_distance)), expand = c(0.07,0)) +
+    scale_color_manual(values = c("none" = rgb(0, 0, 0, alpha=0), "ecl" = rgb(0, 0, 0, alpha=0)))
+
+# Create a plot for ranked positions and their absolute sum of distances
+distance_plot_below <- ggplot(data = below_sum_df %>%
+         arrange(abs_sum_distance), aes(x = log(as.numeric(reorder(pos, abs_sum_distance))), y = abs_sum_distance)) +
+ 
+  labs(x = "Rank, log-scale", y = "Sum distances") +
+  geom_point(size = 3, shape = 21) +
+  scale_x_continuous(labels = c(1, 10, 100), 
+                       breaks = log(c(1, 10, 100)), 
+                       expand = c(.025, .025)) +
+  #ggtitle(y_var_label) +
+  theme_options +
+  theme(panel.background = element_rect(fill = "white"),
+        axis.title = element_blank()) +
+  scale_y_continuous(limits = c(min(below_sum_df$abs_sum_distance), expand = c(0, 0))) +
+      scale_color_manual(values = c("none" = rgb(0, 0, 0, alpha=0), "ecl" = rgb(0, 0, 0, alpha=0))) 
+
+# For distance_plot_above
+distance_plot_above <- distance_plot_above +
+  geom_text_repel(data = head(above_sum_df, 20), aes(label = pos), box.padding = 0.1, point.padding = 0.1)
+
+# For distance_plot_below
+distance_plot_below <- distance_plot_below +
+  geom_text_repel(data = tail(below_sum_df, 20), aes(label = pos), box.padding = 0.1, point.padding = 0.1)
+
+
+  # Arrange distance plot vertically
+  plot_arranged <- distance_plot_above / distance_plot_below
+    
+  # Save the plot as an output file
+  ggsave(output_file1, scatter_plot, height = 80, width = 80, units = "mm",  dpi = 450)
+  ggsave(output_file2, plot_arranged, height = 130, width = 140, units = "mm", dpi = 450)
+  # Return the distance df
+  return(list(above_sum_df, below_sum_df, distance_df))
+}
+
+# Update function calls with "distance" 
+dms1_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_1",y_var_for_line = "score_dms_1", "output/plots/dms1_surf_euclidian.pdf", "output/plots/dms1_surf_euclidian_2.pdf")
+
+dms2_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_2",y_var_for_line = "score_dms_2", "output/plots/dms2_surf_euclidian.pdf", "output/plots/dms1_surf_euclidian_2.pdf")
+
+dms3_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_3",y_var_for_line = "score_dms_3", "output/plots/dms3_surf_euclidian.pdf", "output/plots/dms3_surf_euclidian_2.pdf")
+
+dms4_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_4",y_var_for_line = "score_dms_4", "output/plots/dms4_surf_euclidian.pdf", "output/plots/dms4_surf_euclidian_2.pdf")
+
+dms5_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_5",y_var_for_line = "score_dms_5", "output/plots/dms5_surf_euclidian.pdf", "output/plots/dms5_surf_euclidian_2.pdf")
+
+dms6_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_6",y_var_for_line = "score_dms_6", "output/plots/dms6_surf_euclidian.pdf", "output/plots/dms6_surf_euclidian_2.pdf")
+
+internalization_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_internalization",y_var_for_line = "score_dms_internalization", "output/plots/internalization_surf_euclidian.pdf", "output/plots/internalization_surf_euclidian_2.pdf")
+
+abundance_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "score_dms_abundance",y_var_for_line = "score_dms_abundance", "output/plots/abundnace_surf_euclidian.pdf", "output/plots/abundnace_surf_euclidian_2.pdf")
+
+#store the values of dms3_surf_euclidian in a new df
+dms3_surf_euclidian_df <- dms3_surf_euclidian[[3]]
+dms3_surf_euclidian_df_above <- dms3_surf_euclidian[[1]]
+dms3_surf_euclidian_df_below <- dms3_surf_euclidian[[2]]
+dms6_surf_euclidian_df_above <- dms6_surf_euclidian[[1]]
+
+# arrange the df dms3_surf_euclidian_df_above from highest to lowest value of abs_sum_distance and create a list of the pos value of the 20 highest abs_sum_distance values
+dms3_surf_euclidian_df_above_pos <- dms3_surf_euclidian_df_above %>% arrange(desc(abs_sum_distance)) %>% head(40) %>% select(pos)
+
+#filter the more_scores_missense df to only include rows where pos is in the list of the 20 highest abs_sum_distance values
+dms3_surf_euclidian_df_above_pos_df <- mor_scores_missense %>% filter(pos %in% c(167, 77, 246, 149, 181, 274, 291, 123, 298, 132, 299, 126, 302, 159, 171, 324, 321, 328, 196, 164))
+
+# map scores onto structure
+dms3_surf_euclidian_df_above_pos_df <- map_scores_to_structure(dms3_surf_euclidian_df_above_pos_df, "score_dms_3", "output/plots/dms3_surf_euclidian_df_above_pos_df.pdf")
+```
 
 ```
