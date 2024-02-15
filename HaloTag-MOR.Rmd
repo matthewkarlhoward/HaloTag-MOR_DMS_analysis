@@ -4,7 +4,6 @@ output: html_notebook
 ---
 
 #packages and utils
-
 ```{r}
 library(tidyverse)
 library(tidyr)
@@ -23,7 +22,6 @@ source("scripts/dms_analysis_utilities.R")
 ```
 
 # import Enrich2 score files and annotate
-
 ```{r}
 mor_scores_file = "data/DMS/main_identifiers_scores.tsv"
 
@@ -72,13 +70,11 @@ mor_scores <- mor_scores %>% select(hgvs, pos, len, mutation_type, variants, sta
 ```
 
 # import sequence
-
 ```{r}
 mor_wt = "MDSSAAPTNASNCTDALAYSSCSPAPSPGSWVNLSHLDGNLSDPCGPNRTDLGGRDSLCPPTGSPSMITAITIMALYSIVCVVGLFGNFLVMYVIVRYTKMKTATNIYIFNLALADALATSTLPFQSVNYLMGTWPFGTILCKIVISIDYYNMFTSIFTLCTMSVDRYIAVCHPVKALDFRTPRNAKIINVCNWILSSAIGLPVMFMATTKYRQGSIDCTLTFSHPTWYWENLLKICVFIFAFIMPVLIITVCYGLMILRLKSVRMLSGSKEKDRNLRRITRMVLVVVAVFIVCWTPIHIYVIIKALVTIPETTFQTVSWHFCIALGYTNSCLNPVLYAFLDENFKRCFREFCIPTSSNIEQQNSTRIRQNTRDHPSTANTVDRTNHQLENLEAETAPLP"
 ```
 
 #import external data
-
 ```{r}
 # import fortifications:
 
@@ -106,7 +102,6 @@ human_mouse_positions = read.csv("data/oprm_human_mouse_pos.csv")
 ```
 
 #merge external data \# TODO: recalculate the Galpha distances to the MOR stucture and join to mor_scores, make the gnomad interpretable and join to mor_scores
-
 ```{r}
 # join auxiliary data to the mor_scores datafame
 
@@ -127,7 +122,6 @@ mor_scores = left_join(mor_scores, human_mouse_positions, by = c("pos" = "pos"))
 ```
 
 #data annotations
-
 ```{r}
 # add a new column to mor_scores called motif and fill every row with NA
 # then fill rows corresponding to the following motifs and residue numbers
@@ -244,7 +238,6 @@ mor_scores <- mor_scores %>%
   ))
 
 mor_scores <- mor_scores %>% filter(mutation_type != "X")
-
 ```
 
 #import structures 
@@ -257,7 +250,6 @@ alphafold_inactive <- read.pdb("structures/alphafold_hmor_inactive.pdb")
 ```
 
 #heatmaps
-
 ```{r}
 dms6_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
              rows = variants,
@@ -409,7 +401,6 @@ abundance_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M"
 ```
 
 #density plots
-
 ```{r}
 #plot densities of all scores
 
@@ -558,7 +549,6 @@ ggsave("output/plots/master_density_plots_motif.pdf", combined_plots, width = 10
 ```
 
 #2d scatters with coloring
-
 ```{r}
 # make scatter plots of all scores against all scores
 plot_mor_scores <- function(data, x_var, y_var, color_var) {
@@ -608,7 +598,6 @@ for (color_var in color_variables) {
 ```
 
 #3d scatters
-
 ```{r}
 # make a 3d scatter of the internalization, dms_3 and surface scores
 install.packages("scatterplot3d")
@@ -845,4 +834,12 @@ abundance_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_misse
 # dms3_surf_euclidian_df_above_pos_df <- map_scores_to_structure(dms3_surf_euclidian_df_above_pos_df, "score_dms_3", "output/plots/dms3_surf_euclidian_df_above_pos_df.pdf")
 ```
 
-```
+# import raw counts data and parse out meean counts for each replicate
+```{r}
+# import raw counts data .csv file
+raw_counts <- read.csv("data/DMS/main_identifiers_counts_cleaned.csv")
+
+# make new df from raw_counts with only the columns hgvs, and any that start with "mean_"
+mean_counts <- raw_counts %>% select(hgvs, starts_with("mean_"))
+
+
