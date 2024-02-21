@@ -12,6 +12,13 @@ library(zoo)
 library(patchwork)
 library(pheatmap)
 library(ggrepel)
+library(ggridges)
+
+install.packages("scatterplot3d")
+library(scatterplot3d)
+
+install.packages("plotly")
+library(plotly)
 
 library(pak)
 pak::pak("jbengler/tidyheatmaps")
@@ -66,7 +73,7 @@ mor_scores$is.wt = mor_scores$mutation_type == "S"
 mor_scores <- mor_scores %>% filter(mutation_type != "X")
 
 # make new df from mor_scores with only the score_dms columns, pos, len, mutation_type, and variants
-mor_scores <- mor_scores %>% select(hgvs, pos, len, mutation_type, variants, starts_with("score_dms"))
+mor_scores <- mor_scores %>% dplyr::select(hgvs, pos, len, mutation_type, variants, is.wt, starts_with("score_dms_"))
 ```
 
 # import sequence
@@ -96,8 +103,17 @@ mor_damgo_distances = read.csv("data/damgo_ATOM_distances.csv")
 # import G alpha distances (CA to CA)
 mor_galpha_distances = read.csv("data/ga_CA_distances.csv")
 
+# import amino acid volumes
+amino_acid_vol = read.csv("data/amino_acid_volumes.csv")
+
 #human mouse positions 
 human_mouse_positions = read.csv("data/oprm_human_mouse_pos.csv")
+
+# import raw counts data .csv file
+raw_counts <- read.csv("data/DMS/main_identifiers_counts_cleaned.csv")
+
+# make new df from raw_counts with only the columns hgvs, and any that start with "mean_"
+mean_counts <- raw_counts %>% dplyr::select(hgvs, starts_with("mean_"))
 
 ```
 
@@ -119,6 +135,9 @@ mor_scores = left_join(mor_scores, mor_damgo_distances, by = c("pos" = "pos"))
 
 # join the human mouse positions to mor_scores by the pos column, keep all values in mor_scores
 mor_scores = left_join(mor_scores, human_mouse_positions, by = c("pos" = "pos"))
+
+# join the amino acid volumes to mor_scores by the variants column, keep all values in mor_scores
+mor_scores = left_join(mor_scores, amino_acid_vol, by = c("variants" = "variants"))
 ```
 
 #data annotations
@@ -137,21 +156,26 @@ mor_scores = left_join(mor_scores, human_mouse_positions, by = c("pos" = "pos"))
 # phospho: 365, 366, 372, 385, 396
 # glyco: N40
 
-mor_scores$motif = NA
 
+mor_scores$motif_activation = NA
 # now fill motif column with motif name for pos above
-mor_scores[mor_scores$pos %in% c(166, 167, 168), "motif"] = "DRY"
-mor_scores[mor_scores$pos %in% c(334, 335, 336, 337, 338), "motif"] = "NPxxY"
-mor_scores[mor_scores$pos %in% c(246, 157, 294), "motif"] = "PIF"
-mor_scores[mor_scores$pos %in% c(294, 295, 296, 297), "motif"] = "CWxP"
-mor_scores[mor_scores$pos %in% c(116), "motif"] = "Na+ pocket"
-mor_scores[mor_scores$pos %in% c(142, 219), "motif"] = "disulfide"
-mor_scores[mor_scores$pos %in% c(149, 223, 297), "motif"] = "waters"
-mor_scores[mor_scores$pos %in% c(356, 357, 358), "motif"] = "TSS"
-mor_scores[mor_scores$pos %in% c(377, 378, 379, 380, 381), "motif"] = "STANT"
-mor_scores[mor_scores$pos %in% c(365, 366, 372, 385, 396), "motif"] = "phospho"
-mor_scores[mor_scores$pos %in% c(40), "motif"] = "glyco"
-mor_scores[mor_scores$pos %in% c(103, 170, 171, 174, 175, 178, 179, 181, 260, 261, 265, 266, 266, 270, 272, 273, 279, 280, 342, 343, 344), "motif"] = "Ga-contact"
+mor_scores[mor_scores$pos %in% c(166, 167, 168), "motif_activation"] = "DRY"
+mor_scores[mor_scores$pos %in% c(334, 335, 338), "motif_activation"] = "NPxxY"
+mor_scores[mor_scores$pos %in% c(246, 157, 291), "motif_activation"] = "PIF"
+mor_scores[mor_scores$pos %in% c(294, 295, 297), "motif_activation"] = "CWxP"
+mor_scores[mor_scores$pos %in% c(116), "motif_activation"] = "D2.50 (Na+)"
+mor_scores[mor_scores$pos %in% c(142, 219), "motif_activation"] = "disulfide"
+mor_scores[mor_scores$pos %in% c(149), "motif_activation"] = "D3.32"
+mor_scores[mor_scores$pos %in% c(170, 175, 179, 181, 265, 266, 272, 273, 279, 343), "motif_activation"] = "Ga-contact" #within 3.5A of Galpha
+
+
+
+
+mor_scores$motif_internalization = NA
+mor_scores[mor_scores$pos %in% c(356, 357, 358, 377, 378, 381, 365, 366, 372, 385, 396), "motif_activation"] = "phospho-site"
+
+#mor_scores[mor_scores$pos %in% c(40), "motif"] = "glyco"
+
 
 
 # add columns for amino acid properties size, charge, etc
@@ -219,9 +243,9 @@ mor_scores <- mor_scores %>%
   ))
 mor_scores <- mor_scores %>%
   mutate(size = case_when(
-    variants %in% very_large ~ 'hydrophobic',
-    variants %in% large ~ 'hydrophilic',
-    variants %in% medium ~ 'neutral',
+    variants %in% very_large ~ 'very_large',
+    variants %in% large ~ 'large',
+    variants %in% medium ~ 'medium',
     variants %in% small ~ 'small',
     variants %in% very_small ~ 'very_small',
     TRUE ~ 'unknown'  # add this line to handle unexpected values
@@ -236,8 +260,38 @@ mor_scores <- mor_scores %>%
     variants %in% amide ~ 'amide',
     TRUE ~ 'unknown'  # add this line to handle unexpected values
   ))
+```
 
-mor_scores <- mor_scores %>% filter(mutation_type != "X")
+# import raw counts data and parse out meean counts for each replicate
+```{r}
+# from the mean_counts df, calculate a mean across each replicate that average "mean_dms#_r#" values and returns a column called "mean_dms#"
+
+# convert all mean_dms#_r# columns to numeric
+mean_counts <- mean_counts %>%
+  mutate_at(vars(starts_with("mean_dms")), as.numeric)
+
+
+mean_counts <- mean_counts %>%
+  mutate(mean_dms1 = rowMeans(dplyr::select(., starts_with("mean_dms1_r"))))
+mean_counts <- mean_counts %>%
+  mutate(mean_dms2 = rowMeans(dplyr::select(., starts_with("mean_dms2_r"))))
+mean_counts <- mean_counts %>%
+  mutate(mean_dms3 = rowMeans(dplyr::select(., starts_with("mean_dms3_r"))))
+mean_counts <- mean_counts %>%
+  mutate(mean_dms4 = rowMeans(dplyr::select(., starts_with("mean_dms4_r"))))
+mean_counts <- mean_counts %>%
+  mutate(mean_dms5 = rowMeans(dplyr::select(., starts_with("mean_dms5_r"))))
+mean_counts <- mean_counts %>%
+  mutate(mean_dms6 = rowMeans(dplyr::select(., starts_with("mean_dms6_r"))))
+
+# create a mean bins df taking hgvs and mean_dms# columns from mean counts
+mean_bins <- mean_counts %>% dplyr::select(hgvs, mean_dms1, mean_dms2, mean_dms3, mean_dms4, mean_dms5, mean_dms6)
+
+# join mean_bins to mor_scores by hgvs, keep all values
+mor_scores <- left_join(mor_scores, mean_bins, by = c("hgvs" = "hgvs"))
+
+mor_scores_missense <- mor_scores %>% filter(mutation_type %in% c("M", "S"))
+
 ```
 
 #import structures 
@@ -249,13 +303,14 @@ alphafold_active <- read.pdb("structures/alphafold_hmor_active.pdb")
 alphafold_inactive <- read.pdb("structures/alphafold_hmor_inactive.pdb")
 ```
 
-#heatmaps
+#heatmaps (enrich2)
 ```{r}
-dms6_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms6_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_6,
-             annotation_col = c(wt_aa, SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
@@ -263,155 +318,290 @@ dms6_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S"
              treeheight_row =50,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms6",
-             filename = "output/plots/dms6_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "0uM_dms6_enrich2",
+             filename = "output/plots/dms6_heatmap_enrich2_annotated.pdf"
 )
 
-dms5_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms5_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_5,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms5",
-             filename = "output/plots/dms5_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "0.001uM_DAMGO_dms5_enrich2",
+             filename = "output/plots/dms5_heatmap_enrich2_annotated.pdf"
 )
 
-dms4_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms4_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_4,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms4",
-             filename = "output/plots/dms4_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "0.01uM_DAMGO_dms4_enrich2",
+             filename = "output/plots/dms4_heatmap_enrich2_annotated.pdf"
 )
 
-dms3_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms3_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_3,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms3",
-             filename = "output/plots/dms3_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "0.1uM_DAMGO_dms3_enrich2",
+             filename = "output/plots/dms3_heatmap_enrich2_annotated.pdf"
 )
 
-dms2_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms2_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_2,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms2",
-             filename = "output/plots/dms2_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "1uM_DAMGO_dms2_enrich2",
+             filename = "output/plots/dms2_heatmap_enrich2_annotated.pdf"
 )
 
-dms1_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+dms1_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_1,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("blue","white","red"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "dms1",
-             filename = "output/plots/dms1_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "10uM_DAMGO_dms1_enrich2",
+             filename = "output/plots/dms1_heatmap_enrich2_annotated.pdf"
 )
 
-surface_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+surface_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_surface,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, motif_internalization, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("red","white","blue"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "surface",
-             filename = "output/plots/surface_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "surface_enrich2",
+             filename = "output/plots/surface_heatmap_enrich2_annotated.pdf"
 )
 
-internalization_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+internalization_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_internalization,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
+             annotation_col = c(conservation, motif_activation, motif_internalization, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("red","white","blue"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
-             main = "internalization",
-             filename = "output/plots/internalization_heatmap_annotated.pdf"
+             cellwidth = 7,
+             main = "internalization_enrich2",
+             filename = "output/plots/internalization_heatmap_enrich2_annotated.pdf"
 )
 
-abundance_heatmap <- tidy_heatmap(mor_scores %>% filter(mutation_type %in% c("M", "S")) %>% filter(pos %in% 1:400) %>% arrange(pos), 
+abundance_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
              rows = variants,
              columns = pos,
              values = score_dms_abundance,
-             annotation_col = c(SSE, conservation, motif, damgo_distance),
-             
+             annotation_col = c(conservation, motif_activation, motif_internalization, damgo_distance),
+             gaps_col = SSE,
              scale = "none",
              colors = c("red","white","blue"),
              color_na = "grey",
              color_legend_n = 1000,
              fontsize = 6,
              cellheight = 10,
-             cellwidth = 10,
+             cellwidth = 7,
              height = 10,
-             main = "abundance",
-             filename = "output/plots/abundance_heatmap_annotated.pdf"
+             main = "abundance_enrich2",
+             filename = "output/plots/abundance_heatmap_enrich2_annotated.pdf"
 )
 
 ```
-
-#density plots
+#heatmaps (mean bin)
 ```{r}
-#plot densities of all scores
+mean_dms6_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms6,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             treeheight_row =50,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "0uM_dms6_mean_bin",
+             filename = "output/plots/dms6_heatmap_mean_bin_annotated.pdf"
+)
 
+mean_dms5_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms5,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "0.001uM_DAMGO_dms5_mean_bin",
+             filename = "output/plots/dms5_heatmap_mean_bin_annotated.pdf"
+)
+
+mean_dms4_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms4,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "0.01uM_DAMGO_dms4_mean_bin",
+             filename = "output/plots/dms4_heatmap_mean_bin_annotated.pdf"
+)
+
+mean_dms3_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms3,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "0.1uM_DAMGO_dms3_mean_bin",
+             filename = "output/plots/dms3_heatmap_mean_bin_annotated.pdf"
+)
+
+mean_dms2_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms2,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "1uM_DAMGO_dms2_mean_bin",
+             filename = "output/plots/dms2_heatmap_mean_bin_annotated.pdf"
+)
+
+mean_dms1_heatmap <- tidy_heatmap(mor_scores %>% arrange(pos), 
+             rows = variants,
+             columns = pos,
+             values = mean_dms1,
+             annotation_col = c(conservation, motif_activation, damgo_distance),
+             gaps_col = SSE,
+             scale = "none",
+             colors = c("blue","white","red"),
+             color_na = "grey",
+             color_legend_n = 1000,
+             color_legend_min = 1.1,
+             color_legend_max = 3.75,
+             fontsize = 6,
+             cellheight = 10,
+             cellwidth = 7,
+             main = "10uM_DAMGO_dms1_mean_bin",
+             filename = "output/plots/dms1_heatmap_mean_bin_annotated.pdf"
+)
+```
+
+#density plots by mutation type
+```{r}
+# create a theme for the plots that is based on theme_classic(), but set all font sizes to 6 and all text to black
+my_theme <- theme_classic() +
+    theme(
+      text = element_text(size = 6, color = "black"),
+      axis.text = element_text(size = 6, color = "black"),
+      axis.title = element_text(size = 6, color = "black"),
+      legend.text = element_text(size = 6, color = "black"),
+      legend.title = element_text(size = 6, color = "black"),
+      strip.text = element_text(size = 6, color = "black")
+    )
+
+
+#plot densities of all scores
 # Function to create density plots
 create_density_plot <- function(data, score_column, label) {
   ggplot(data) +
     geom_density(aes(x = !!sym(score_column), color = mutation_type)) +
     xlab(label) +
     ylab("Density") +
-    geom_vline(xintercept = 0, linetype = "dotted") +
-    theme_classic() +
+    #geom_vline(xintercept = 0, linetype = "dotted") +
+    my_theme +
     labs(color = "Mutation type") +
     xlim(-3, 3) +
     ylim(0, 2)
@@ -437,18 +627,19 @@ combined_plots <- wrap_plots(density_plots, ncol = 3)
 # Save the combined plot
 ggsave("output/plots/master_density_plots.pdf", combined_plots, width = 10, height = 10)
 
-###
+```
 
-library(ggridges)
+# density plots by motif enrich (all scores) and mean bin (Gi-signaling scores)
+```{r}
 # Function to create density plots
 create_density_plot <- function(data, score_column, label) {
-    data <- data %>% filter(mutation_type %in% c("M", "S"))  
+    data <- data %>% filter(mutation_type %in% c("M"))  
   ggplot(data) +
-    geom_density(aes(x = !!sym(score_column), color = motif)) +
+    geom_density(aes(x = !!sym(score_column), color = motif_activation)) +
     xlab(label) +
     ylab("Density") +
     geom_vline(xintercept = 0, linetype = "dotted") +
-    theme_classic() +
+    my_theme +
     labs(color = "motif") +
     xlim(-3.5, 3.5) +
     ylim(0, 2.5)
@@ -508,15 +699,16 @@ create_density_plot <- function(data, score_column, label) {
   sd_s <- sd(data_s[[score_column]], na.rm = TRUE)
   
   ggplot(data %>% filter(mutation_type == "M")) +
-    geom_density_ridges(aes(x = !!sym(score_column), y = motif, fill = motif),
+    geom_density_ridges(aes(x = !!sym(score_column), y = motif_activation, fill = motif_activation),
                         alpha = 0.7, scale = 0.9) +
     xlab(label) +
     ylab("Density") +
-    #geom_vline(xintercept = 0, linetype = "dotted") +
-    geom_vline(xintercept = mean_s, linetype = "dotted") +
-    geom_vline(xintercept = mean_s - sd_s, linetype = "dotted", color = "red") +
-    geom_vline(xintercept = mean_s + sd_s, linetype = "dotted", color = "red") +
-    theme_classic() +
+    geom_vline(xintercept = 0, linetype = "dotted") +
+    # geom_vline(xintercept = mean_s, linetype = "dotted") +
+    # geom_vline(xintercept = mean_s - sd_s, linetype = "dotted", color = "red") +
+    # geom_vline(xintercept = mean_s + sd_s, linetype = "dotted", color = "red") +
+
+    my_theme +
     xlim(-3.5, 3.5)
 }
 
@@ -545,18 +737,71 @@ combined_plots <- wrap_plots(density_plots, ncol = 3) + plot_layout(guides = "co
 ggsave("output/plots/master_density_plots_motif.pdf", combined_plots, width = 10, height = 10)
 
 ###
+create_density_plot <- function(data, score_column, label) {
+  # Check if mutation_type and score_column are present in data
+  # if (!all(c("mutation_type", score_column) %in% names(data))) {
+  #   stop("Mutation_type or specified score_column not found in data.")
+  # }
+  
+  # Filter data for mutation_type "S"
+  data_s <- data %>% filter(mutation_type == "S")
+  
+  # # Check if there is any data for mutation_type "S"
+  # if (nrow(data_s) == 0) {
+  #   stop("No data available for mutation_type 'S'.")
+  # }
+  
+  # Calculate mean and standard deviation for mutation_type "S"
+  mean_s <- mean(data_s[[score_column]], na.rm = TRUE)
+  sd_s <- sd(data_s[[score_column]], na.rm = TRUE)
+  
+  ggplot(data %>% filter(mutation_type == "M")) +
+    geom_density_ridges(aes(x = !!sym(score_column), y = motif_activation, fill = motif_activation),
+                        alpha = 0.7, scale = 0.9) +
+    xlab(label) +
+    ylab("Density") +
+    #geom_vline(xintercept = 0, linetype = "dotted") +
+    # geom_vline(xintercept = mean_s, linetype = "dotted") +
+    # geom_vline(xintercept = mean_s - sd_s, linetype = "dotted", color = "red") +
+    # geom_vline(xintercept = mean_s + sd_s, linetype = "dotted", color = "red") +
 
+    my_theme +
+    xlim(1, 4)
+}
+
+# Example usage:
+# create_density_plot(your_data_frame, "your_score_column", "Your Label")
+
+
+# List to store density plots
+density_plots <- list()
+
+# Score columns and labels
+score_columns <- c("mean_dms1", "mean_dms2", "mean_dms3", "mean_dms4", "mean_dms5", "mean_dms6")
+
+labels <- c("dms1", "dms2", "dms3", "dms4", "dms5", "dms6")
+
+# Create density plots and store them in the list
+for (i in seq_along(score_columns)) {
+  density_plots[[i]] <- create_density_plot(mor_scores, score_columns[i], labels[i])
+}
+
+# Arrange plots using patchwork and collect guides
+combined_plots <- wrap_plots(density_plots, ncol = 3) + plot_layout(guides = "collect")
+
+# Save the combined plot
+ggsave("output/plots/master_density_plots_motif_mean_bin.pdf", combined_plots, width = 10, height = 6)
 ```
 
 #2d scatters with coloring
 ```{r}
 # make scatter plots of all scores against all scores
 plot_mor_scores <- function(data, x_var, y_var, color_var) {
-  ggplot(data) +
+  ggplot(data %>% filter(mutation_type == "M")) +
     geom_point(aes(x = {{x_var}},
                    y = {{y_var}},
                    color = !!sym(color_var))) +
-    theme_classic() + 
+    my_theme +
     labs(color = color_var) +
     xlim(-3, 3) +
     ylim(-3, 3)
@@ -568,7 +813,7 @@ variables <- c("score_dms_surface", "score_dms_internalization", "score_dms_abun
                "score_dms_4", "score_dms_5", "score_dms_6")
 
 # Define the list of color variables
-color_variables <- c("motif", "conservation", "mutation_type", "alphamissense_classification", "SSE")
+color_variables <- c("motif_activation", "conservation", "mutation_type", "alphamissense_classification", "SSE", "damgo_distance", "aa_volume", "chemistry", "aromaticity", "h_bonding", "charge", "polarity", "hydropathy", "size")
 
 # Iterate over all combinations of x, y, and color variables
 for (color_var in color_variables) {
@@ -593,20 +838,18 @@ for (color_var in color_variables) {
   grid_plot
 
   # Save the grid plot as a PDF with a dynamic filename
-  ggsave(paste0("output/plots/master_scatter_", color_var, ".pdf"), grid_plot, width = 40, height = 40)
+  ggsave(paste0("output/plots/master_scatter_missense_", color_var, ".pdf"), grid_plot, width = 40, height = 40)
 }
 ```
 
-#3d scatters
+#3d scatters (in progress)
 ```{r}
 # make a 3d scatter of the internalization, dms_3 and surface scores
-install.packages("scatterplot3d")
-library(scatterplot3d)
-mor_3d <- scatterplot3d(mor_scores %>% filter(mutation_type != "X") %>% select(score_dms_internalization, score_dms_3, score_dms_surface), pch = 16, color = "blue", main = "3D Scatterplot of Internalization, DMS3 and Surface Scores")
 
-install.packages("plotly")
-library(plotly)
-plot_ly(mor_scores %>% filter(mutation_type != "X"), x = ~score_dms_internalization, y = ~score_dms_3, z = ~score_dms_surface, color = ~motif, colors = "Set1", type = "scatter3d", mode = "markers", marker = list(size = 3))
+mor_3d <- scatterplot3d(mor_scores_missense %>% dplyr::select(score_dms_internalization, score_dms_3, score_dms_surface), pch = 16, color = "blue", main = "3D Scatterplot of Internalization, DMS3 and Surface Scores")
+
+
+plot_ly(mor_scores_missense, x = ~score_dms_internalization, y = ~score_dms_3, z = ~score_dms_surface, color = ~motif_activation, colors = "Set1", type = "scatter3d", mode = "markers", marker = list(size = 3))
 
 # create a new df from mor_scores with the pos, each of the 9 dms scores, motif, mutation_type, and variants columns
 mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_dms_3, score_dms_4, score_dms_5, score_dms_6, score_dms_surface, score_dms_internalization, score_dms_abundance, motif, mutation_type, variants, SSE)
@@ -614,6 +857,8 @@ mor_score_minimal <- mor_scores %>% select(pos, score_dms_1, score_dms_2, score_
 # create a new df from mor_score_minimal and calculate the absolute sum of the scores 
 
 ```
+
+
 
 #apply diagonal magic
 ```{r}
@@ -832,14 +1077,305 @@ abundance_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_misse
 # 
 # # map scores onto structure
 # dms3_surf_euclidian_df_above_pos_df <- map_scores_to_structure(dms3_surf_euclidian_df_above_pos_df, "score_dms_3", "output/plots/dms3_surf_euclidian_df_above_pos_df.pdf")
+
+mean_bin_dms6_surf_euclidian <- full_scatter_distance_summed_signed(mor_scores_missense, "score_dms_surface", "mean_dms6",y_var_for_line = "score_dms_6", "output/plots/mean_bin_dms6_surf_euclidian.pdf")
 ```
 
-# import raw counts data and parse out meean counts for each replicate
+
+
+
+# plot mean dms score curves where each hgvs has a line connecting values of dms1, 2, 3, 4, 5, 6
 ```{r}
-# import raw counts data .csv file
-raw_counts <- read.csv("data/DMS/main_identifiers_counts_cleaned.csv")
+#make a scatter plot of mean_dms1 vs score_dms1
+scatter_plot_dms1 <- ggplot(mor_scores, aes(x = mean_dms1, y = score_dms_1,  color = damgo_distance)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(x = "Mean DMS1", y = "Score DMS1") +
+  theme_classic() +
+  ggtitle("Mean DMS1 vs Score DMS1") +
+  facet_grid(~ motif)
 
-# make new df from raw_counts with only the columns hgvs, and any that start with "mean_"
-mean_counts <- raw_counts %>% select(hgvs, starts_with("mean_"))
 
+scatter_plot_dms1
+
+# Assuming mor_scores is your data frame
+mor_scores_avg <- mor_scores %>%
+  group_by(pos) %>%
+  summarise(avg_mean_dms6 = mean(mean_dms6), avg_damgo_distance = mean(damgo_distance), avg_conservation = mean(conservation), motif_internalization = motif_internalization, motif_Activation = motif_activation)
+
+
+# Plotting the averaged scores against damgo_distance
+library(ggrepel)
+
+a <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms6, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+b <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms5, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+c <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms4, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+d <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms3, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+e <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms2, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+f <- ggplot(mor_scores, aes(x = damgo_distance, y = mean_dms1, color = motif_activation)) +
+  geom_point() +
+  #geom_smooth(method = "lm", se = TRUE) + +
+  theme_classic() +
+  ylim(1, 4)
+
+(a+b+c+d+e+f) + plot_layout(guides = "collect")
+
+```
+
+
+```{r}
+# make a plot of  each mean_dms# score for each row where mutation_type is "S" and draw horizontal lines at the overall mean value of mean_dms# and +/- one SD from the mean
+
+plot_mean_dms <- function(column_number) {
+  # Generate the column name based on the input number
+  column_name <- paste0("mean_dms", column_number)
+  
+  # Filter data for mutation_type == "S"
+  filtered_data <- mor_scores %>% filter(mutation_type == "S")
+  
+  # Calculate mean and standard deviation for mutation_type "S"
+  mean_value <- mean(filtered_data[[column_name]], na.rm = TRUE)
+  sd_value <- sd(filtered_data[[column_name]], na.rm = TRUE)
+  sem_value <- sd_value / sqrt(length(filtered_data[[column_name]]))
+  print(paste("Mean", column_name, "mutation_type is 'S':", mean_value))
+  print(paste("Standard deviation of", column_name, "mutation_type is 'S':", sd_value))
+  
+  # Create the ggplot
+  ggplot(filtered_data, aes(x = pos, y = !!rlang::sym(column_name))) +
+    geom_point() +
+    geom_line() +
+    labs(title = paste("Mean", column_name, "mutation_type is 'S'"),
+         x = "Position",
+         y = paste("Mean", column_name, "score")) +
+    theme_classic() +
+    # Add horizontal line for mean
+    geom_hline(yintercept = mean_value, linetype = "dotted", color = "blue") +
+    # Add horizontal lines for mean +/- SD
+    geom_hline(yintercept = mean_value + 2*sd_value, linetype = "dashed", color = "red") +
+    geom_hline(yintercept = mean_value - 2*sd_value, linetype = "dashed", color = "red") + 
+    ylim(1, 4) +
+    # Set text size and color
+    theme(axis.text = element_text(size = 6, color = "black"),
+          axis.title = element_text(size = 6, color = "black"),
+          plot.title = element_text(size = 6, color = "black"))
+}
+
+# Example usage: plot_mean_dms(3)
+(plot_mean_dms(1) + plot_mean_dms(2) + plot_mean_dms(3)) / (plot_mean_dms(4) + plot_mean_dms(5) + plot_mean_dms(6))
+
+ggsave("output/plots/mean_bin_syn_score_per_pos.png", width = 10, height = 10, units = "cm")
+
+a + plot_mean_dms(6)
+```
+
+
+
+
+```{r}
+# now make a line plot that has mean_dms1, mean_dms2, mean_dms3, mean_dms4, mean_dms5, and mean_dms6 on the x-axis and plots the mean value of each mutation_type = "S" for each mean_dms# score on the y-axis
+# first, we need to calculate the mean value of each mean_dms# score for each mutation_type = "S"
+
+mean_dms_values_syn <- mor_scores %>% 
+  filter(mutation_type == "S") %>% 
+  summarise(mean_dms1 = mean(mean_dms1, na.rm = TRUE),
+            mean_dms2 = mean(mean_dms2, na.rm = TRUE),
+            mean_dms3 = mean(mean_dms3, na.rm = TRUE),
+            mean_dms4 = mean(mean_dms4, na.rm = TRUE),
+            mean_dms5 = mean(mean_dms5, na.rm = TRUE),
+            mean_dms6 = mean(mean_dms6, na.rm = TRUE))
+
+# Use pivot_longer to convert data from wide to long format
+mean_dms_values_long_syn <- mean_dms_values_syn %>% 
+  pivot_longer(cols = starts_with("mean_dms"), names_to = "key", values_to = "mean_value")
+
+# Plot the data
+ggplot(mean_dms_values_long_syn, aes(x = key, y = mean_value, group = 1)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Mean value of each mean_dms# score for each mutation_type = 'S'",
+       x = "Mean DMS# score",
+       y = "Mean value") +
+  theme_minimal()
+###
+# Calculate standard deviation for each mean_dms column
+sd_values_syn <- mor_scores %>%
+  filter(mutation_type == "S") %>%
+  summarise(across(starts_with("mean_dms"), sd, na.rm = TRUE)) %>%
+  pivot_longer(cols = everything(), names_to = "key", values_to = "sd_value")
+
+# Merge mean and sd data
+merged_data <- merge(mean_dms_values_long_syn, sd_values_syn, by = "key")
+
+# Plot the data with error bars
+ggplot(merged_data, aes(x = key, y = mean_value, group = 1)) +
+  geom_line() +
+  geom_point() +
+  geom_errorbar(aes(ymin = mean_value - sd_value, ymax = mean_value + sd_value), width = 0.2, color = "blue") +
+  labs(title = "Mean bin value of each dms# score for syn +/-SD",
+       y = "Mean bin") +
+  theme_classic()
+
+
+
+```
+
+```{r}
+# now make a line plot that has mean_dms1, mean_dms2, mean_dms3, mean_dms4, mean_dms5, and mean_dms6 on the x-axis and plots the mean value of each mutation_type = "M" for each mean_dms# score on the y-axis
+# first, we need to calculate the mean value of each mean_dms# score for each mutation_type = "M"
+
+
+# Use pivot_longer to convert data from wide to long format
+mean_dms_values_long <- mor_scores %>% 
+  pivot_longer(cols = starts_with("mean_dms"), names_to = "key", values_to = "mean_value")
+
+# Plot the data
+ggplot(mean_dms_values_long %>% filter(mutation_type == "M"), aes(x = key, y = mean_value, group = hgvs, color = size)) +
+  geom_line() +
+  geom_point() +
+  labs(title = "Mean value of each mean_dms# score",
+       x = "Mean DMS# score",
+       y = "Mean value") +
+  theme_classic() +
+  ylim(1.5, 3.3) +
+
+  facet_wrap(~ pos, scales = "free_y") 
+
+ggsave("output/plots/mean_bin_curves_pos_colored_AAsize.pdf", width = 50, height = 50, limitsize = FALSE)
+```
+
+
+```{r}
+#plot correlation between mean_dms# scores score_dms_# scores
+# Your original plot code
+cor1 <- ggplot(mor_scores, aes(x = mean_dms1, y = score_dms_1)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+cor2 <- ggplot(mor_scores, aes(x = mean_dms2, y = score_dms_2)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+cor3 <- ggplot(mor_scores, aes(x = mean_dms3, y = score_dms_3)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+cor4 <- ggplot(mor_scores, aes(x = mean_dms4, y = score_dms_4)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+cor5 <- ggplot(mor_scores, aes(x = mean_dms5, y = score_dms_5)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+cor6 <- ggplot(mor_scores, aes(x = mean_dms6, y = score_dms_6)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  theme_classic() +
+  # Add Spearman correlation coefficient
+  stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9)
+
+(cor1+cor2+cor3)/(cor4+cor5+cor6)
+```
+
+```{r}
+
+# calculate the sum of mean_dms6 at each position from the mor_scores_missense dataframe
+
+mor_scores_missense <- mor_scores %>%
+  filter(mutation_type == "M")
+
+mean_bin_summed_scores <- mor_scores_missense %>%
+  group_by(pos) %>%
+  summarise(mean_mean_dms6 = mean(mean_dms6, na.rm = TRUE))
+
+
+#plot pos vs sum_mean_dms6
+sum <- ggplot(sum_mean_dms6) +
+  geom_point(aes(x = pos, y = sum_mean_dms6, color = motif)) +
+  #geom_point(aes(x = pos, y = mean_mean_dms6, color = "red")) +
+  labs(title = "Sum of mean_dms6 at each position",
+       x = "Position",
+       y = "Sum of mean_dms6") +
+  theme_classic()
+sum
+
+mean <- ggplot(sum_mean_dms6) +
+  #geom_line(aes(x = pos, y = sum_mean_dms6, color = "red")) +
+  geom_point(aes(x = pos, y = mean_mean_dms6, color = motif)) +
+  labs(title = "Sum of mean_dms6 at each position",
+       x = "Position",
+       y = "Sum of mean_dms6") +
+  theme_classic()
+
+sum+mean
+
+ggplot(sum_mean_dms6, aes(x = mean_mean_dms6, y = sum_mean_dms6)) +
+  geom_point() +
+  theme_classic()
+
+
+ggplot(mean_bin_summed_scores, aes(x = pos, y = sum_mean_dms6)) +
+  geom_point() +
+  theme_classic()
+# map these onto the damgo structure 
+
+x = map_scores_pdb(damgo_8efq, mean_bin_summed_scores, "mean_mean_dms6")
+ca.chainsABC<-atom.select(x, 'calpha', chain = c('R'))
+write.pdb(x, file="output/structures/mean_bin_dms6_summed.pdb")
+
+```
+
+```{r}
+# plots each dms score vs damgo_distance
+# Your original plot code
+ggplot(mor_scores_missense, aes(x = mean_dms3, y = score_dms_surface, color = conservation, alpha = 0.5)) +
+  geom_point() +
+  #geom_smooth(method = "lm") +
+  theme_classic() +
+  facet_wrap(~ motif_activation)
+  #Add Spearman correlation coefficient
+  #stat_cor(method = "spearman", label.x = 0.8, label.y = 0.9) +
+    # label the points with mean_dms1 below 2.25
+  #geom_text_repel(aes(label = pos))
+```
 
