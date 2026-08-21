@@ -1,0 +1,300 @@
+# ─── MOR experimental structures: ligand overlay ─────────────
+# Reference receptor: 8efq (human MOR / DAMGO / Gi1)
+
+close session
+set bgColor white
+
+# ─── Open + strip each structure ────────────────────────────
+# [1] 8efq  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+delete #1 & ~/R,P
+delete #1:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [2] 4dkl  receptor=/A
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/4dkl.cif
+delete #2 & ~/A
+delete #2:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [3] 5c1m  receptor=/A
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/5c1m.cif
+delete #3 & ~/A
+delete #3:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [4] 6dde  receptor=/R  peptide_ligand=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/6dde.cif
+delete #4 & ~/R,D
+delete #4:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [5] 6ddf  receptor=/R  peptide_ligand=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/6ddf.cif
+delete #5 & ~/R,D
+delete #5:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [6] 7sbf  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7sbf.cif
+delete #6 & ~/R
+delete #6:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [7] 7scg  receptor=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7scg.cif
+delete #7 & ~/D
+delete #7:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [8] 7t2g  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7t2g.cif
+delete #8 & ~/R
+delete #8:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [9] 7t2h  receptor=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7t2h.cif
+delete #9 & ~/D
+delete #9:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [10] 7u2k  receptor=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7u2k.cif
+delete #10 & ~/D
+delete #10:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [11] 7u2l  receptor=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7u2l.cif
+delete #11 & ~/D
+delete #11:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [12] 7ul4  receptor=/A
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/7ul4.cif
+delete #12 & ~/A
+delete #12:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [13] 8Y72  receptor=/R  peptide_ligand=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8Y72.cif
+delete #13 & ~/R,D
+delete #13:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [14] 8Y73  receptor=/R  peptide_ligand=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8Y73.cif
+delete #14 & ~/R,D
+delete #14:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [15] 8e0g  receptor=/A
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8e0g.cif
+delete #15 & ~/A
+delete #15:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [16] 8ef5  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef5.cif
+delete #16 & ~/R
+delete #16:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [17] 8ef6  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+delete #17 & ~/R
+delete #17:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [18] 8efb  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efb.cif
+delete #18 & ~/R
+delete #18:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [19] 8efl  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efl.cif
+delete #19 & ~/R
+delete #19:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [20] 8efo  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efo.cif
+delete #20 & ~/R
+delete #20:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [21] 8f7q  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8f7q.cif
+delete #21 & ~/R,P
+delete #21:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [22] 8f7r  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8f7r.cif
+delete #22 & ~/R,P
+delete #22:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [23] 8k9k  receptor=/R  peptide_ligand=/S
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8k9k.cif
+delete #23 & ~/R,S
+delete #23:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [24] 8k9l  receptor=/R  peptide_ligand=/S
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8k9l.cif
+delete #24 & ~/R,S
+delete #24:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [25] 9MQI  receptor=/A
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9MQI.cif
+delete #25 & ~/A
+delete #25:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [26] 9ODL  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9ODL.cif
+delete #26 & ~/R
+delete #26:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [27] 9PXU  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9PXU.cif
+delete #27 & ~/R
+delete #27:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [28] 9PXW  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9PXW.cif
+delete #28 & ~/R
+delete #28:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [29] 9PY2  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9PY2.cif
+delete #29 & ~/R
+delete #29:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [30] 9PY3  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9PY3.cif
+delete #30 & ~/R
+delete #30:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [31] 9PY4  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9PY4.cif
+delete #31 & ~/R
+delete #31:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [32] 9WST  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9WST.cif
+delete #32 & ~/R,P
+delete #32:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [33] 9WSV  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9WSV.cif
+delete #33 & ~/R,P
+delete #33:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [34] 9WSW  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9WSW.cif
+delete #34 & ~/R,P
+delete #34:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [35] 9WSX  receptor=/R  peptide_ligand=/P
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9WSX.cif
+delete #35 & ~/R,P
+delete #35:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [36] 9bjk  receptor=/R
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9bjk.cif
+delete #36 & ~/R
+delete #36:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# [37] 9bqj  receptor=/D
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/9bqj.cif
+delete #37 & ~/D
+delete #37:HOH,WAT,NA,CL,MG,K,CA,ZN,SO4,PO4,GOL,EDO,PEG,P6G,PG4,1PE,MPG,CLR,OLC,OLA,PLM,VSN,NAG,FUC,MAN,BMA,GTP,GDP,GNP
+
+# ─── Matchmaker alignment to 8efq receptor ──────────────────
+matchmaker #2-37 to #1/R alg sw matrix BLOSUM-62 ssFraction 0.3
+
+# ─── Delete non-reference receptor protein, keep ligands ─────
+delete #2 & protein & /A
+delete #3 & protein & /A
+delete #4 & protein & /R
+delete #5 & protein & /R
+delete #6 & protein & /R
+delete #7 & protein & /D
+delete #8 & protein & /R
+delete #9 & protein & /D
+delete #10 & protein & /D
+delete #11 & protein & /D
+delete #12 & protein & /A
+delete #13 & protein & /R
+delete #14 & protein & /R
+delete #15 & protein & /A
+delete #16 & protein & /R
+delete #17 & protein & /R
+delete #18 & protein & /R
+delete #19 & protein & /R
+delete #20 & protein & /R
+delete #21 & protein & /R
+delete #22 & protein & /R
+delete #23 & protein & /R
+delete #24 & protein & /R
+delete #25 & protein & /A
+delete #26 & protein & /R
+delete #27 & protein & /R
+delete #28 & protein & /R
+delete #29 & protein & /R
+delete #30 & protein & /R
+delete #31 & protein & /R
+delete #32 & protein & /R
+delete #33 & protein & /R
+delete #34 & protein & /R
+delete #35 & protein & /R
+delete #36 & protein & /R
+delete #37 & protein & /D
+
+# ─── Render ─────────────────────────────────────────────────
+# Reference receptor as cartoon
+hide #1 atoms
+show #1 cartoon
+color #1 #DDDDDD
+transparency #1 60 cartoon
+
+# Hide cartoon on non-reference (only ligands remain)
+hide #2-37 cartoon
+hide #2-37 ribbon
+
+# Show every remaining atom (ligands) as sticks
+show #2-37 atoms
+style #2-37 stick
+
+# Peptide ligand on reference (DAMGO) also as sticks
+show #1/P atoms
+style #1/P stick
+
+# ─── Color each ligand uniquely ─────────────────────────────
+color #1/P #E6194B
+color #2 #3CB44B  # 4dkl
+color #3 #FFE119  # 5c1m
+color #4 #4363D8  # 6dde
+color #5 #F58231  # 6ddf
+color #6 #911EB4  # 7sbf
+color #7 #46F0F0  # 7scg
+color #8 #F032E6  # 7t2g
+color #9 #BCF60C  # 7t2h
+color #10 #FABEBE  # 7u2k
+color #11 #008080  # 7u2l
+color #12 #E6BEFF  # 7ul4
+color #13 #9A6324  # 8Y72
+color #14 #FFFAC8  # 8Y73
+color #15 #800000  # 8e0g
+color #16 #AAFFC3  # 8ef5
+color #17 #808000  # 8ef6
+color #18 #FFD8B1  # 8efb
+color #19 #000075  # 8efl
+color #20 #808080  # 8efo
+color #21 #FF1493  # 8f7q
+color #22 #00CED1  # 8f7r
+color #23 #FF8C00  # 8k9k
+color #24 #8A2BE2  # 8k9l
+color #25 #00FA9A  # 9MQI
+color #26 #DC143C  # 9ODL
+color #27 #1E90FF  # 9PXU
+color #28 #FFD700  # 9PXW
+color #29 #7B68EE  # 9PY2
+color #30 #20B2AA  # 9PY3
+color #31 #FF6347  # 9PY4
+color #32 #4682B4  # 9WST
+color #33 #D2691E  # 9WSV
+color #34 #9ACD32  # 9WSW
+color #35 #BA55D3  # 9WSX
+color #36 #CD5C5C  # 9bjk
+color #37 #5F9EA0  # 9bqj
+
+# Recolor heteroatoms by element for clarity
+color byhetero
+
+# ─── View ───────────────────────────────────────────────────
+view
+view #1/R:50-340  # frame on MOR transmembrane core
+
+# ─── Done ───────────────────────────────────────────────────
+echo Loaded and aligned 37 MOR structures; non-reference receptors stripped, ligands overlaid.

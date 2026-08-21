@@ -1,0 +1,42 @@
+pdb_id,state,bound_ligand,ligand_class,effector,include,notes
+4dkl,inactive,beta-FNA,morphinan_antagonist,none,TRUE,T4L fusion crystal structure
+5c1m,active,BU72,morphinan_agonist,Nb39,TRUE,Nb39-stabilized active
+6dde,active,DAMGO,peptide,Gi1,TRUE,Gi1+scFv16
+6ddf,active,DAMGO,peptide,Gi1,TRUE,Gi1 (no scFv16)
+7sbf,active,PZM21,biased,Gi1,TRUE,Gi1+scFv16
+7scg,active,FH210,biased,Gi1,TRUE,Gi1
+7t2g,active,Mitragynine,alkaloid,Gi1,TRUE,Gi1
+7t2h,active,Lofentanil,phenylpiperidine,Gi1,TRUE,Gi1+scFv16
+7u2k,active,C6-guano,phenylpiperidine,Gi1,TRUE,Gi1
+7u2l,active,C5-guano,phenylpiperidine,Gi1,TRUE,Gi1+scFv16
+7ul4,inactive,Alvimopan,peripheral_antagonist,Mb6,TRUE,megabody-stabilized inactive
+8Y72,active,DAMGO,peptide,Gi1,TRUE,PAM BMS-986122 bound
+8Y73,active,DAMGO,peptide,Gi1,TRUE,PAM MPAM-15 bound
+8e0g,active,BU72,morphinan_agonist,Nb39,TRUE,re-refinement of 5c1m
+8ef5,active,Fentanyl,phenylpiperidine,Gi1,TRUE,Gi1+scFv16
+8ef6,active,Morphine,morphinan_agonist,Gi1,TRUE,Gi1+scFv16
+8efb,active,Oliceridine,biased,Gi1,TRUE,Gi1+scFv16
+8efl,active,SR17018,biased,Gi1,TRUE,Gi1+scFv16
+8efo,active,PZM21,biased,Gi1,TRUE,Gi1+scFv16
+8efq,active,DAMGO,peptide,Gi1,TRUE,Gi1+scFv16
+8f7q,active,beta-endorphin,peptide,Gi1,TRUE,Gi1+scFv16
+8f7r,active,endomorphin,peptide,Gi1,TRUE,Gi1+scFv16
+8k9k,active,DAMGO,peptide,Gi3,TRUE,Gi3+scFv16
+8k9l,active,DAMGO,peptide,Gi3,TRUE,Gi3+scFv16 PAM bound
+8qot,inactive,none,none,NbE,FALSE,antagonist nanobody only - excluded per user
+9MQI,inactive,isoquinuclidine_020,antagonist,Nb6M,TRUE,Nb6M-stabilized inactive
+9ODL,active,Mitragynine_pseudoindoxyl,alkaloid,Gi1,TRUE,Gi1 GTP-bound (G-ACT-3)
+9PXU,inactive,Naloxone,morphinan_antagonist,Nb6,TRUE,inactive-state naloxone
+9PXV,active,Naloxone,morphinan_antagonist,Gi1,FALSE,nucleotide-free naloxone-Gi1 - excluded per user
+9PXW,intermediate,Naloxone,morphinan_antagonist,Gi1,TRUE,latent-state naloxone-Gi GDPbS (rebound)
+9PXX,active,Naloxone,morphinan_antagonist,Gi1,FALSE,unlatched-state naloxone - excluded per user
+9PXY,active,Naloxone,morphinan_antagonist,Gi1,FALSE,primed-state naloxone - excluded per user
+9PY2,active,Loperamide,phenylpiperidine,Gi1,TRUE,engaged-state loperamide-Gi
+9PY3,active,Loperamide,phenylpiperidine,Gi1,TRUE,unlatched-state loperamide-Gi
+9PY4,active,Loperamide,phenylpiperidine,Gi1,TRUE,primed-state loperamide-Gi
+9WST,active,DAMGO,peptide,Gz,TRUE,Gz+scFv16
+9WSV,active,DAMGO,peptide,Barr1,TRUE,beta-arrestin-1 + Fab30 (V2R chimera)
+9WSW,active,endomorphin-1,peptide,Gz,TRUE,Gz+scFv16
+9WSX,active,endomorphin-1,peptide,Barr1,TRUE,beta-arrestin-1 + Fab30 (V2R chimera)
+9bjk,inactive,Naloxone,morphinan_antagonist,Nb6,TRUE,Nb6 + NAM bound
+9bqj,active,RO76,small_molecule,Gi1,TRUE,Gi1+scFv16

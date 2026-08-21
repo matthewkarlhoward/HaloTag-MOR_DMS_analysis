@@ -1,0 +1,20 @@
+# DAMGO EC50 LoF (side view)
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+delete ~/R & ~/P
+delete solvent
+hide atoms
+show /R cartoons
+color /R #cccccc
+show /P atoms
+style /P stick
+color /P yellow
+color /P byhetero
+open /Users/mkh/GitHub/mor_dms_analysis/curve_refitting/chimerax_maps/attr_damgo_ec50.defattr
+color byattribute r:ec50lof /R palette white:white:blue range 0,1.5 target c noValueColor #cccccc
+set bgColor white
+lighting soft
+graphics silhouettes true
+view matrix camera -0.66813,0.056198,-0.74192,38.605,0.20656,0.97196,-0.11239,102.95,0.7148,-0.22835,-0.661,35.991
+view matrix models #1,-0.93420,-0.35235,0.05589,306.67663,-0.08447,0.37066,0.92491,-63.26687,-0.34661,0.85934,-0.37603,118.95274
+2dlabel create t text "DAMGO EC50 LoF (side)" xpos .03 ypos .95 size 12 color black

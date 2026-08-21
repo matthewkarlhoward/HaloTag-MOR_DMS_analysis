@@ -1,0 +1,28 @@
+Pi Interaction Extraction Summary
+============================================================
+
+Structures processed: 33
+Structures skipped:   0
+  Inactive defined:   5
+  Active defined:     28
+
+Total pi interactions found:
+  Pi-pi stacking:           186
+    parallel:                29
+    t-shaped:                88
+    other:                   69
+  Pi-cation:                161
+  Pi-ligand:                262
+
+Cutoffs used:
+  Pi-pi centroid-centroid:  5.5 Å
+  Pi-cation centroid-atom:  6.0 Å
+  Pi-ligand centroid-atom:  5.5 Å
+
+Stacking classification (inter-plane angle):
+  parallel:  < 30°
+  t_shaped:  60–90°
+  other:     30–60°
+
+Aromatic residues detected: PHE, TYR, TRP, HIS
+Cationic residues detected: ARG, LYS

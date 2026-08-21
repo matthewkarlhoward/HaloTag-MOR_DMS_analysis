@@ -1,0 +1,45 @@
+# Interactive workspace: morphine(#1,8EF6/R)  fentanyl(#2,8EF5/M)  damgo(#3,8EFQ/R)
+# All receptors superposed; both attributes loaded. Switch views: `view side` / `view top`.
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef5.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+delete #1 & ~/R
+delete #2 & ~/M
+delete #3 & ~/R & ~/P
+delete :CLR
+delete solvent
+hide atoms
+show #1/R cartoons
+show #2/M cartoons
+show #3/R cartoons
+color #1/R #cccccc
+color #2/M #cccccc
+color #3/R #cccccc
+show #1:MOI atoms
+style #1:MOI sphere
+color #1:MOI yellow
+color #1:MOI byhetero
+show #2:7V7 atoms
+style #2:7V7 sphere
+color #2:7V7 yellow
+color #2:7V7 byhetero
+show #3/P atoms
+style #3/P stick
+color #3/P yellow
+color #3/P byhetero
+open /Users/mkh/GitHub/mor_dms_analysis/curve_refitting/chimerax_maps/attr_all_emax.defattr
+open /Users/mkh/GitHub/mor_dms_analysis/curve_refitting/chimerax_maps/attr_all_ec50.defattr
+color byattribute r:emaxlof #1/R palette white:white:red range 0,1.0 target c noValueColor #cccccc
+color byattribute r:emaxlof #2/M palette white:white:red range 0,1.0 target c noValueColor #cccccc
+color byattribute r:emaxlof #3/R palette white:white:red range 0,1.0 target c noValueColor #cccccc
+set bgColor white
+lighting soft
+graphics silhouettes true
+# --- named views (camera + all three model matrices) ---
+view matrix camera -0.011909,0.9134,-0.40688,87.959,-0.25662,0.39051,0.88411,208,0.96644,0.11494,0.22975,156.05
+view matrix models #1,-0.93420,-0.35235,0.05589,306.67721,-0.08447,0.37066,0.92492,-63.26753,-0.34661,0.85935,-0.37603,118.95009 #2,-0.94354,-0.32918,-0.03721,313.50056,-0.15946,0.35285,0.92199,-46.47143,-0.29037,0.87587,-0.38541,112.38838 #3,-0.86546,-0.31701,-0.38793,366.93000,-0.39492,-0.04475,0.91762,0.74857,-0.30826,0.94737,-0.08646,59.39000
+view name top
+view matrix camera -0.66813,0.056198,-0.74192,38.605,0.20656,0.97196,-0.11239,102.95,0.7148,-0.22835,-0.661,35.991
+view matrix models #1,-0.85867,-0.19853,0.47252,221.61000,0.20054,0.71828,0.66622,-76.67700,-0.47166,0.66683,-0.57695,181.08000 #2,-0.90260,-0.18632,0.38807,235.39631,0.15611,0.69844,0.69843,-66.84135,-0.40116,0.69100,-0.60132,171.86456 #3,-0.93420,-0.35235,0.05589,306.67663,-0.08447,0.37066,0.92491,-63.26687,-0.34661,0.85934,-0.37603,118.95274
+view name side

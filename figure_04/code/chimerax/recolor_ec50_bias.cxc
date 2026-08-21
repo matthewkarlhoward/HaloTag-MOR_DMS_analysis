@@ -1,0 +1,49 @@
+# EC50 morphine-vs-fentanyl potency bias on µOR, colored by the CORRECT metric:
+#   per-position  ΔEC50(Morphine) - ΔEC50(Fentanyl)   (each ligand vs its own synonymous WT)
+#   +  -> blue  = mutations here cost MORPHINE more potency
+#   -  -> red   = cost FENTANYL more potency
+# Receptor: 8EF6 (morphine-bound). Overlaid: 8EF5 (fentanyl-bound) for pocket overlap.
+
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef5.cif
+
+# superimpose the fentanyl structure onto the morphine structure by the receptor chain
+matchmaker #2/R to #1/R
+
+# show only the morphine-structure receptor cartoon (chain R); hide everything else
+hide cartoons
+hide atoms
+show #1/R cartoons
+color #1/R #d9d9d9
+
+# both ligands in the shared frame: morphine (teal) from #1, fentanyl (orange) from #2
+show #1:MOI atoms
+style #1:MOI stick
+color #1:MOI teal
+color #1:MOI byhetero
+show #2:7V7 atoms
+style #2:7V7 stick
+color #2:7V7 orange
+color #2:7V7 byhetero
+
+# CENTERED per-position bias attribute (removes the global morphine
+# receptor-reserve offset) -> color the morphine-structure receptor only
+open /Users/mkh/GitHub/mor_dms_analysis/manuscript_revision/chimerax/ec50_bias_centered.defattr
+color byattribute r:ec50c #1/R palette red:white:blue range -1,1 target c noValueColor #d9d9d9
+
+# label the centered-significant differentiators (BH q<0.05): morphine + fentanyl
+label #1/R:168,299,182,346,126,130,295,261 text "{0.label_one_letter_code}{0.number}"
+
+# presentation
+set bgColor white
+lighting soft
+graphics silhouettes true
+view #1/R
+windowsize 1600 1200
+
+# save a side view, then a top-down (extracellular) pocket view
+save /Users/mkh/GitHub/mor_dms_analysis/manuscript_revision/chimerax/ec50_bias_overlay_side.png width 1600 height 1200 supersample 3
+turn x -90
+view #1/R
+save /Users/mkh/GitHub/mor_dms_analysis/manuscript_revision/chimerax/ec50_bias_overlay_topdown.png width 1600 height 1200 supersample 3

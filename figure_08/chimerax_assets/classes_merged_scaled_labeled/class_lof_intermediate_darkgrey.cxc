@@ -1,0 +1,65 @@
+# Class network script: Intermediate LOF
+# Two-model layout (#1 translucent cartoon, #2 opaque spheres)
+
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+
+hide ~/R
+hide solvent
+hide ligand
+
+cartoon #1/R
+hide #1/R target a
+color #1/R #a8a8a8
+color #1/R #a8a8a8 transparency 75
+
+~cartoon #2
+hide #2/R target a
+
+set bgColor white
+lighting soft
+lighting shadows false
+graphics silhouettes true
+
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_attributes/lof_intermediate_count.defattr
+
+sel #2/R:73,77,98,99,100,105,115,116,120,122,126,145,146,149,152,153,154,156,157,164,167,170,171,175,176,177,178,180,181,182,183,238,239,242,246,249,254,257,261,273,277,278,279,280,291,295,298,299,302,321,323,324,327,328,330,331,334@CA
+show sel target a
+style sel sphere
+size #2/R:73,98,99,105,120@CA atomRadius 0.823
+size #2/R:145,331@CA atomRadius 0.882
+size #2/R:146,164,183,249,273@CA atomRadius 0.939
+size #2/R:157,239,242,279@CA atomRadius 0.993
+size #2/R:156,182,295@CA atomRadius 1.045
+size #2/R:178,238,257@CA atomRadius 1.095
+size #2/R:115,176,330@CA atomRadius 1.144
+size #2/R:152,246@CA atomRadius 1.191
+size #2/R:323,324,334@CA atomRadius 1.237
+size #2/R:122,171,180@CA atomRadius 1.281
+size #2/R:154,299@CA atomRadius 1.325
+size #2/R:153,302@CA atomRadius 1.367
+size #2/R:170,277@CA atomRadius 1.408
+size #2/R:278@CA atomRadius 1.527
+size #2/R:116@CA atomRadius 1.602
+size #2/R:177@CA atomRadius 1.71
+size #2/R:175@CA atomRadius 1.744
+size #2/R:126,261,328@CA atomRadius 1.878
+size #2/R:291@CA atomRadius 1.941
+size #2/R:280@CA atomRadius 1.973
+size #2/R:254,298@CA atomRadius 2.004
+size #2/R:321,327@CA atomRadius 2.034
+size #2/R:100,149@CA atomRadius 2.152
+size #2/R:167@CA atomRadius 2.181
+size #2/R:77@CA atomRadius 2.265
+size #2/R:181@CA atomRadius 2.4
+color sel #9b1c1d
+~sel
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_merged/lof_intermediate.pb
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_interactions_merged/lof_intermediate_hbonds.pb
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_interactions_merged/lof_intermediate_pi.pb
+label #2/R:181,77,167,100,149,321,327 residues text "{0.number}" height 2.6 color black bgColor white
+view matrix camera 0.270015,-0.078762,0.959629,283.278195,0.962548,0.047287,-0.266956,91.245077,-0.024352,0.995771,0.088581,170.109358
+turn y -5
+view #1/R
+zoom 1.6

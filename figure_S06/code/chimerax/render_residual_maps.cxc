@@ -1,0 +1,4 @@
+open /Users/mkh/GitHub/mor_dms_analysis/plots/scatter/surface/chimerax/morphine_ec50_resid.cxc
+save /Users/mkh/GitHub/mor_dms_analysis/plots/scatter/surface/chimerax/morphine_ec50_resid.png width 1200 height 1500 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/scatter/surface/chimerax/morphine_emax_resid.cxc
+save /Users/mkh/GitHub/mor_dms_analysis/plots/scatter/surface/chimerax/morphine_emax_resid.png width 1200 height 1500 supersample 3 transparentBackground true

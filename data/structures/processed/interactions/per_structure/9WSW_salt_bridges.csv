@@ -1,0 +1,6 @@
+res1_num,res1_name,res1_atom,res2_num,res2_name,res2_atom,distance
+181,ARG,NE,166,ASP,OD1,2.898
+213,ARG,NE,218,ASP,OD2,2.97
+235,LYS,NZ,231,GLU,OE1,3.67
+275,ARG,NH2,272,GLU,OE2,2.435
+279,ARG,NH1,343,GLU,OE2,2.275

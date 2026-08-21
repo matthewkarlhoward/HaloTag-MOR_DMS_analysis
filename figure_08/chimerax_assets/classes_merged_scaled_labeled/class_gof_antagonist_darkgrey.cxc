@@ -1,0 +1,46 @@
+# Class network script: Antagonist GOF
+# Two-model layout (#1 translucent cartoon, #2 opaque spheres)
+
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+
+hide ~/R
+hide solvent
+hide ligand
+
+cartoon #1/R
+hide #1/R target a
+color #1/R #a8a8a8
+color #1/R #a8a8a8 transparency 75
+
+~cartoon #2
+hide #2/R target a
+
+set bgColor white
+lighting soft
+lighting shadows false
+graphics silhouettes true
+
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_attributes/gof_antagonist_count.defattr
+
+sel #2/R:119,148,149,150,152,153,156,160,179,223,230,231,234,235,274,283,287,306,310,328,330,331,341,343@CA
+show sel target a
+style sel sphere
+size #2/R:160,230,234,235,274,306,310,328,331@CA atomRadius 0.55
+size #2/R:156,179,283@CA atomRadius 0.768
+size #2/R:150,343@CA atomRadius 0.966
+size #2/R:153,231,341@CA atomRadius 1.147
+size #2/R:330@CA atomRadius 1.316
+size #2/R:152,223,287@CA atomRadius 1.475
+size #2/R:119,149@CA atomRadius 1.768
+size #2/R:148@CA atomRadius 1.904
+color sel #6f08a3
+~sel
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_merged/gof_antagonist.pb
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_interactions_merged/gof_antagonist_hbonds.pb
+label #2/R:148,119,149,152,223,287,330 residues text "{0.number}" height 2.6 color black bgColor white
+view matrix camera 0.270015,-0.078762,0.959629,283.278195,0.962548,0.047287,-0.266956,91.245077,-0.024352,0.995771,0.088581,170.109358
+turn y -5
+view #1/R
+zoom 1.6

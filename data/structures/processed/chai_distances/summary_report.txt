@@ -1,0 +1,55 @@
+MOR Ligand Distance Analysis — ChAI Predictions
+================================================================================
+
+Total structures analyzed: 4
+Total distance measurements: 1,360
+
+Shell definitions:
+  First shell:  sidechain atoms <= 5.0 A from ligand
+  Second shell: sidechain atoms <= 4.5 A from first-shell sidechain
+                (not already first shell)
+
+Note: Receptor residues 1-60 excluded (disordered N-terminus in predictions)
+Note: ChAI predictions use human MOR numbering directly
+
+--------------------------------------------------------------------------------
+
+MOR-Naltrexone_rank1:
+  Drug: Naltrexone
+  G-protein chains: none
+  Distance range: 2.57 -- 46.43 A
+  Mean distance: 19.02 A
+  First shell:  15 residues
+  Second shell: 28 residues
+  First shell residues:  ASP149(2.6A), TYR150(3.3A), MET153(3.3A), VAL302(3.4A), VAL238(3.5A), TRP295(3.5A), HIS299(3.5A), TYR328(3.6A), TRP320(3.7A), GLY327(3.8A), ILE298(3.9A), ILE324(4.2A), GLN126(4.5A), ALA119(4.6A), LYS235(4.9A)
+  Second shell residues: SER331, THR122, ALA242, PHE239, PHE154, LEU234, THR120, LEU123, ASN152, LEU221, ILE146, ILE157, LYS305, PHE243, ASN330, VAL204, TYR77, CYS323, ILE200, ALA306, TYR301, GLU231, LEU326, VAL80, CYS294, HIS321, PHE291, GLN316
+
+MOR-Nalbuphine_rank0:
+  Drug: Nalbuphine
+  G-protein chains: B
+  Distance range: 2.48 -- 69.57 A
+  Mean distance: 20.39 A
+  First shell:  15 residues
+  Second shell: 24 residues
+  First shell residues:  ASP149(2.5A), TYR150(2.9A), MET153(3.1A), TRP295(3.5A), VAL302(3.6A), VAL238(3.7A), HIS299(3.7A), ILE298(3.8A), TRP320(3.8A), TYR328(3.9A), ILE324(3.9A), GLY327(4.0A), ALA119(4.2A), SER331(4.5A), GLN126(4.8A)
+  Second shell residues: ASN152, THR122, ILE146, ASP116, LEU234, THR120, PHE154, ALA242, LEU221, PHE239, ASN330, ILE157, LYS305, LEU123, VAL204, PHE243, TYR77, CYS323, TYR301, LEU326, VAL80, HIS321, CYS294, PHE291
+
+MOR-Methadone_rank0:
+  Drug: Methadone
+  G-protein chains: B
+  Distance range: 2.14 -- 65.05 A
+  Mean distance: 20.99 A
+  First shell:  14 residues
+  Second shell: 26 residues
+  First shell residues:  ASP149(2.1A), GLN126(3.0A), VAL238(3.0A), ILE324(3.0A), TYR150(3.0A), TRP295(3.2A), MET153(3.4A), TRP320(3.5A), TYR328(3.6A), GLY327(3.6A), VAL302(3.6A), ILE298(3.9A), HIS299(3.9A), ILE146(4.9A)
+  Second shell residues: LYS235, THR122, LEU221, PHE154, LEU234, VAL204, ALA242, PHE239, LYS305, LEU123, ILE157, CYS323, TYR77, TYR301, LEU326, ALA119, CYS219, PHE243, ASN330, HIS321, CYS294, CYS142, THR120, VAL80, ALA208, PHE291
+
+MOR-Butorphanol_rank0:
+  Drug: Butorphanol
+  G-protein chains: B
+  Distance range: 2.39 -- 73.78 A
+  Mean distance: 20.36 A
+  First shell:  15 residues
+  Second shell: 27 residues
+  First shell residues:  ASP149(2.4A), MET153(3.3A), TYR150(3.3A), TRP295(3.4A), VAL302(3.4A), ILE298(3.5A), TYR328(3.5A), TRP320(3.6A), GLY327(3.6A), VAL238(3.6A), HIS299(3.7A), ILE324(3.8A), SER331(4.0A), ALA119(4.0A), GLN126(4.0A)
+  Second shell residues: LYS235, ASN152, ASP116, THR122, THR120, PHE154, ILE146, LEU234, ASN330, ILE157, PHE239, LEU221, ALA242, LEU123, LYS305, VAL204, TYR77, CYS323, TYR301, PHE243, HIS321, VAL80, ILE200, LEU326, CYS294, PHE291, GLN316

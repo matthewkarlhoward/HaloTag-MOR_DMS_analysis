@@ -1,0 +1,38 @@
+# Class network script: No Ligand LOF
+# Two-model layout (#1 translucent cartoon, #2 opaque spheres)
+
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8efq.cif
+
+hide ~/R
+hide solvent
+hide ligand
+
+cartoon #1/R
+hide #1/R target a
+color #1/R #a8a8a8
+color #1/R #a8a8a8 transparency 75
+
+~cartoon #2
+hide #2/R target a
+
+set bgColor white
+lighting soft
+lighting shadows false
+graphics silhouettes true
+
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_attributes/lof_no_ligand_count.defattr
+
+sel #2/R:93,97,175,176,179,181,189,197,225,226,257,275,280,299,315,334,346,347@CA
+show sel target a
+style sel sphere
+size sel atomRadius 1.1
+color sel #888888
+~sel
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_merged/lof_no_ligand.pb
+open /Users/mkh/GitHub/mor_dms_analysis/network_tools/chimerax_pseudobonds/classes_interactions_merged/lof_no_ligand_pi.pb
+view matrix camera 0.270015,-0.078762,0.959629,283.278195,0.962548,0.047287,-0.266956,91.245077,-0.024352,0.995771,0.088581,170.109358
+turn y -5
+view #1/R
+zoom 1.6

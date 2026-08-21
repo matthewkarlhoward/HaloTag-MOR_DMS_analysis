@@ -1,0 +1,21 @@
+# Fentanyl EC50 LoF (top view)
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef5.cif
+delete ~/M
+delete :CLR
+delete solvent
+hide atoms
+show /M cartoons
+color /M #cccccc
+show :7V7 atoms
+style :7V7 stick
+color :7V7 yellow
+color :7V7 byhetero
+open /Users/mkh/GitHub/mor_dms_analysis/curve_refitting/chimerax_maps/attr_fentanyl_ec50.defattr
+color byattribute r:ec50lof /M palette white:white:blue range 0,1.5 target c noValueColor #cccccc
+set bgColor white
+lighting soft
+graphics silhouettes true
+view matrix camera -0.011909,0.9134,-0.40688,87.959,-0.25662,0.39051,0.88411,208,0.96644,0.11494,0.22975,156.05
+view matrix models #1,-0.94354,-0.32918,-0.03721,313.50056,-0.15946,0.35285,0.92199,-46.47143,-0.29037,0.87587,-0.38541,112.38838
+2dlabel create t text "Fentanyl EC50 LoF (top)" xpos .03 ypos .95 size 12 color black

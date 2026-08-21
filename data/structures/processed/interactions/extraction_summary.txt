@@ -1,0 +1,21 @@
+Interaction Extraction Summary
+============================================================
+
+Structures processed: 33
+  Inactive: 5
+  Active:   28
+
+Total interactions found:
+  Hydrogen bonds:         18896
+    backbone-backbone:    16598
+    backbone-sidechain:    1357
+    sidechain-sidechain:    941
+  Salt bridges:             136
+  Hydrophobic contacts:    4117
+
+Cutoffs used:
+  H-bond donor-acceptor:    3.5 Å
+  Salt bridge:              4.0 Å
+  Hydrophobic C-C:          4.5 Å
+  H-bond min seq separation:  2 residues
+  Hydrophobic min seq sep:    3 residues
