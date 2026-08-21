@@ -38,6 +38,7 @@ exported SVGs and three example `.fcs` files are in `data/facs_gating/`.
 | h | `code/make_plots.py` | `figures/variant_counts/plots/` | `data/library_qc/20260522_sort_fastq_gDNA_info.xlsx`, per-bin count tables | `panels/cells_vs_ug_dna.pdf`, `per_bin_coverage_summary.csv` |
 | i | `code/compact_coverage.py` | same | `data/library_qc/per_bin_coverage_summary.csv` | `panels/compact_coverage_strip.pdf` |
 
-The per-bin variant count tables `make_plots.py` walks (~230 MB) are not distributed here;
-its derived output, `per_bin_coverage_summary.csv`, is, so panel **i** is reproducible as
-shipped and panel **h** needs only the spreadsheet.
+The per-bin count tables `make_plots.py` walks are included, in `data/variant_counts/`
+(532 files), so both panels are reproducible end to end. Its derived output,
+`data/library_qc/per_bin_coverage_summary.csv`, is also shipped so panel **i** can be
+redrawn without recounting.

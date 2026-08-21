@@ -3,6 +3,14 @@
 All inputs consumed by the figure scripts. Original repository paths are given so that
 each file can be traced back to the analysis tree it came from.
 
+## variant_counts/ — primary read counts
+
+**532 per-bin count files** across the five screens (surface, DAMGO/morphine/fentanyl
+concentration-response, and the 15-ligand panel), plus sequencing sample sheets. These
+are the Lilace inputs that every score in `dms_scores/` is derived from. One file per
+sorted bin; `hgvs` is the join key. Full layout, file format and naming conventions in
+`variant_counts/README.md`.
+
 ## dms_scores/ — variant scores
 
 | File | Original path | Contents |
@@ -71,8 +79,9 @@ activation window is `1 − Top = −Span`.
 `baseline_1.csv`, `baseline_2.csv`, `mor_variants.csv`, `dimple_paper_oligo.csv`
 (original: `lib_generation/`) — designed vs observed library composition and per-position
 counts. `per_bin_coverage_summary.csv` (original: `figures/variant_counts/plots/`) —
-mean/median coverage per sorted bin, precomputed because the underlying per-bin count
-tables are not distributed here. `20260522_sort_fastq_gDNA_info.xlsx` — cells sorted and
+mean/median coverage per sorted bin, precomputed from the count tables in
+`variant_counts/`; its `variant_counts_filename` column is the join key back to them, and
+it doubles as the sample manifest. `20260522_sort_fastq_gDNA_info.xlsx` — cells sorted and
 gDNA recovered per sample. `20260522_MOR_oligos_primers.xlsx` — oligo and primer tables.
 
 ## structures/

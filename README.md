@@ -10,7 +10,7 @@ mutational pharmacology).
 ## Layout
 
 ```
-data/            all input tables, structures and raw pharmacology files
+data/            all input tables, per-bin variant counts, structures and pharmacology
 supplementary_table/  consolidated supplementary data workbook (8 sheets) + CSVs
 shared/          upstream pipeline scripts + plotting theme shared by many figures
 figure_01 .. 08/ one folder per main figure
@@ -24,6 +24,7 @@ figure_S01 .. S10/ one folder per supplemental figure
 
 ```
 FASTQ  --(Dumpling / GATK AnalyzeSaturationMutagenesis)-->  per-variant counts
+                                                    -> data/variant_counts/  (532 files)
 counts --(Lilace)-->  per-condition variant scores
                         dose-response (morphine / fentanyl / DAMGO)
                         15-ligand saturating-concentration panel
@@ -122,10 +123,9 @@ Figure style throughout: Helvetica 6 pt, black text, 0.5 pt rules, vector PDF wi
 
 ## What is not here
 
-* **Raw sequencing data and per-bin variant count tables.** ~670 MB of FASTQ-derived
-  counts; deposited separately (see the paper's Data availability section). The
-  derived per-bin coverage summary needed for supplemental figure 2 is included as
-  `data/library_qc/per_bin_coverage_summary.csv`.
+* **Raw sequencing reads (FASTQ).** Deposited separately; see the paper's Data
+  availability section. The per-bin variant **count** tables derived from them *are*
+  included, in `data/variant_counts/` (532 files, 194 MB).
 * **Prism projects for the low-throughput BRET and flow assays** (figures 7d–f, 8d,
   S10b). The double-mutant DRC points extracted from Prism *are* included, in
   `data/pharmacology/doubles/`.
