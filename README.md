@@ -1,5 +1,8 @@
 # Pharmacological efficacy is an emergent property of a receptor-wide allosteric network
 
+<!-- Swap XXXXXXX for the Zenodo DOI once the record is published. See ZENODO.md -->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+
 Code and input data for the figures in Howard *et al.*, *"Pharmacological efficacy is an
 emergent property of a receptor-wide allosteric network"* (μ-opioid receptor deep
 mutational pharmacology).
@@ -127,3 +130,22 @@ Figure style throughout: Helvetica 6 pt, black text, 0.5 pt rules, vector PDF wi
   S10b). The double-mutant DRC points extracted from Prism *are* included, in
   `data/pharmacology/doubles/`.
 * **Illustrator/ChemDraw cartoon panels** and cryo-EM processing (cryoSPARC).
+
+## Citation
+
+Cite both the paper and the archived repository. Author list and metadata are in
+`CITATION.cff`; the Zenodo DOI is in the badge above once published.
+
+## License
+
+**Code** (everything under `figure_*/code/`, `shared/`, `supplementary_table/*.py`, and
+`data/structures/scripts/`) is MIT — see `LICENSE`.
+
+**Data** (`data/`, `supplementary_table/` outputs, and the rendered panels under
+`figure_*/panels/`) is CC BY 4.0 — see `LICENSE-DATA`.
+
+Third-party inputs keep their original terms and are not relicensed: the experimental
+structures in `data/structures/raw/experimental/` come from the PDB, and the annotation
+tables in `data/annotations/` come from GPCRdb, AlphaMissense, gnomAD and MTR.
+
+Archiving instructions: `ZENODO.md`.
