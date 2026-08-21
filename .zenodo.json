@@ -1,0 +1,86 @@
+{
+  "title": "Code and data for: Pharmacological efficacy is an emergent property of a receptor-wide allosteric network",
+  "description": "Code and input data reproducing every figure in a deep mutational pharmacology study of the human mu-opioid receptor (OPRM1). Approximately 400,000 measurements of variant effects on signalling and surface expression were collected across 15 opioid ligands spanning the efficacy spectrum, including full concentration-response mutational scans for morphine, fentanyl and DAMGO. The repository contains one folder per main and supplemental figure (scripts, rendered panels and a panel-by-panel README), all input tables and structures under data/, the shared upstream pipeline, and a consolidated eight-sheet supplementary data workbook.",
+  "upload_type": "dataset",
+  "license": "mit",
+  "access_right": "restricted",
+  "creators": [
+    {
+      "name": "Howard, Matthew K.",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Fine, Eve J.",
+      "affiliation": "Stanford University"
+    },
+    {
+      "name": "Richman, Daniel",
+      "affiliation": "Stanford University"
+    },
+    {
+      "name": "Freudenberg, Jerome",
+      "affiliation": "University of California Los Angeles"
+    },
+    {
+      "name": "Srinivasan, Karthik",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Rao, Jingyou",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Weinberg, Zara",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Macdonald, Christian",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Rockefeller Grimes, Patrick",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Von Zastrow, Mark",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "English, Justin",
+      "affiliation": "University of Washington"
+    },
+    {
+      "name": "Pimentel, Harold",
+      "affiliation": "University of California Los Angeles"
+    },
+    {
+      "name": "Dror, Ron",
+      "affiliation": "Stanford University"
+    },
+    {
+      "name": "Manglik, Aashish",
+      "affiliation": "University of California San Francisco"
+    },
+    {
+      "name": "Coyote-Maestas, Willow",
+      "affiliation": "University of California San Francisco"
+    }
+  ],
+  "keywords": [
+    "deep mutational scanning",
+    "GPCR",
+    "mu-opioid receptor",
+    "OPRM1",
+    "allostery",
+    "pharmacological efficacy",
+    "opioids",
+    "protein engineering"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    }
+  ]
+}

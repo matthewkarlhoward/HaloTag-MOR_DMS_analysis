@@ -1,0 +1,28 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Matthew K. Howard and the authors of
+"Pharmacological efficacy is an emergent property of a receptor-wide
+allosteric network"
+
+The DATA in this repository are licensed under CC BY 4.0. This covers
+everything under data/ and supplementary_table/, together with the rendered
+panel files under figure_*/panels/ -- that is, the variant score tables, the
+curve fits, the PCA outputs, the structural tables and coordinate files, the
+pharmacology source files and the consolidated supplementary workbook.
+
+You are free to share and adapt this material for any purpose, including
+commercially, provided you give appropriate credit, link to the license, and
+indicate if changes were made.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+Summary:           https://creativecommons.org/licenses/by/4.0/
+
+Attribution should cite the paper and the Zenodo archive of this repository.
+
+NOTE: Third-party inputs retain their original terms and are NOT relicensed
+here. This includes the experimental structures in
+data/structures/raw/experimental/ (from the PDB), and the annotation tables in
+data/annotations/ (GPCRdb, AlphaMissense, gnomAD, MTR).
+
+The CODE in this repository is licensed separately under the MIT License; see
+LICENSE.

@@ -1,0 +1,66 @@
+cff-version: 1.2.0
+message: "If you use this software or data, please cite both the paper and the archived repository."
+title: "Code and data for: Pharmacological efficacy is an emergent property of a receptor-wide allosteric network"
+abstract: >-
+  Code and input data reproducing every figure in a deep mutational
+  pharmacology study of the human mu-opioid receptor (OPRM1), in which
+  approximately 400,000 measurements of variant effects on signalling and
+  surface expression were collected across 15 opioid ligands, including
+  concentration-response scans for morphine, fentanyl and DAMGO.
+type: dataset
+license: MIT
+repository-code: "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS"
+keywords:
+  - deep mutational scanning
+  - GPCR
+  - mu-opioid receptor
+  - OPRM1
+  - allostery
+  - pharmacological efficacy
+  - opioids
+authors:
+  - given-names: "Matthew K."
+    family-names: Howard
+    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
+  - given-names: "Eve J."
+    family-names: Fine
+    affiliation: "Department of Bioengineering, Stanford University"
+  - given-names: Daniel
+    family-names: Richman
+    affiliation: "Department of Computer Science, Stanford University"
+  - given-names: Jerome
+    family-names: Freudenberg
+    affiliation: "Bioinformatics Interdepartmental Program, University of California Los Angeles"
+  - given-names: Karthik
+    family-names: Srinivasan
+    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
+  - given-names: Jingyou
+    family-names: Rao
+    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
+  - given-names: Zara
+    family-names: Weinberg
+    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
+  - given-names: Christian
+    family-names: Macdonald
+    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
+  - given-names: Patrick
+    family-names: "Rockefeller Grimes"
+    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
+  - given-names: Mark
+    family-names: "Von Zastrow"
+    affiliation: "Department of Psychiatry and Behavioral Sciences, University of California San Francisco"
+  - given-names: Justin
+    family-names: English
+    affiliation: "Institute for Protein Design, University of Washington"
+  - given-names: Harold
+    family-names: Pimentel
+    affiliation: "Department of Computational Medicine, University of California Los Angeles"
+  - given-names: Ron
+    family-names: Dror
+    affiliation: "Department of Computer Science, Stanford University"
+  - given-names: Aashish
+    family-names: Manglik
+    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
+  - given-names: Willow
+    family-names: Coyote-Maestas
+    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
