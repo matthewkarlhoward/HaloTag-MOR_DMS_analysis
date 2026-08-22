@@ -343,7 +343,7 @@ pts = pd.read_csv(DATA / "pharmacology/doubles/doubles_merged_points.csv")
 def per_rep_window_sem(g):
     """SEM of the activation window across replicates, as drawn in figure 8f."""
     per = []
-    for _, r in g.groupby("rep"):
+    for _, r in g.groupby(["experiment", "rep"]):
         m = r.groupby("logM")["response"].mean().reset_index()
         f = fit_drc(m.logM.values, m.response.values)
         if f["ok"] and np.isfinite(f["span"]):
@@ -360,7 +360,7 @@ for (lig, var), g in pts.groupby(["ligand", "variant"]):
         ligand=lig, variant=label,
         is_double=bool(g.is_double.iloc[0]),
         partner=g.partner.iloc[0],
-        n_replicates=int(g.rep.nunique()),
+        n_replicates=int(g.groupby(['experiment','rep']).ngroups),
         n_concentrations=int(g.logM.nunique()),
         logEC50_M=r["params"][2] if r["params"] is not None else np.nan,
         span=r["span"], span_used=r["span_used"],
