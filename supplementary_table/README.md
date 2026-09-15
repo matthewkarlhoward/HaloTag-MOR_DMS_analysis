@@ -121,12 +121,17 @@ naltrexone and C6guano have TRUPATH only.
 
 One row per position × ligand where a contact was assigned, from experimental structures
 where available and Chai-1 predictions otherwise (`structure` names the source). First
-shell = any heavy atom within 4.5 Å of the ligand; second shell = within 5 Å of a
-first-shell residue. Where a ligand has several structures the closest approach is kept.
+shell = **side-chain atoms within 5.0 Å** of any ligand atom; second shell = not first
+shell and **side-chain atoms within 4.5 Å** of a first-shell residue's side chain. Where a
+ligand has several structures the closest approach is kept.
+
+> Note: the manuscript Results currently states these transposed (4.5 Å first, 5 Å second)
+> and as any-heavy-atom rather than side-chain. The rule above is what produced this
+> table; 7.4% of first-shell rows here fail the manuscript's stated rule.
 
 ## 07_validation_pharmacology
 
-The A119L double-mutant TRUPATH Gi1 series (figures 8e–f, supplemental figure 10a).
+The A119L double-mutant TRUPATH Gi1 series (figures 8e–f, supplemental figure 11a).
 `activation_window` = −`span_used`; `pct_activation_vs_WT_DAMGO` = window ÷ the wild-type
 DAMGO window × 100, the exact quantity plotted in figure 8. `span_used` is set to 0 when
 the extra-sum-of-squares F-test against a flat line gives p ≥ 0.05 (`responsive = False`).

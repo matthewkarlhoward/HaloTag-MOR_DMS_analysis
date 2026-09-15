@@ -14,7 +14,7 @@ data/            all input tables, per-bin variant counts, structures and pharma
 supplementary_table/  consolidated supplementary data workbook (8 sheets) + CSVs
 shared/          upstream pipeline scripts + plotting theme shared by many figures
 figure_01 .. 08/ one folder per main figure
-figure_S01 .. S10/ one folder per supplemental figure
+figure_S01 .. S11/ one folder per supplemental figure
    code/         the scripts that draw the panels
    panels/       the rendered panel PDFs as they went into the figure
    README.md     panel-by-panel map of script -> input data -> output
@@ -47,7 +47,7 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 
 | Figure | Panels | Script | Notes |
 |---|---|---|---|
-| 1 | a, b | — | Illustrator cartoons; flow histogram inset exported from FlowJo (`data/facs_gating/`) |
+| 1 | a, b, d | — | Illustrator cartoons; flow histogram inset from FlowJo (`data/facs_gating/`). **d** is the library/screening/processing workflow schematic |
 | 1 | c | `figure_01/code/compute_scatter_values.py` -> `camp_vs_trupath_plots_black.R` | pooled cAMP vs TRUPATH Gi1 Emax/EC50 |
 | 2 | a | — | FlowJo ridgeline export + ChemDraw structures |
 | 2 | b | — | Illustrator schematic |
@@ -55,7 +55,7 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | 2 | d | `figure_02/code/morphine_all_fits_overlay.py` | all ~10k morphine fits + synonymous mean |
 | 2 | e | `figure_02/code/position_combo_morphine.py` (`V83`) | example position curves + Emax/EC50 strips |
 | 3 | a | `figure_03/code/morphine_variant_ec50_vs_emax.py` | per-variant EC50 x Emax landscape |
-| 3 | b, c, d | `figure_03/code/make_chimerax_param_maps.py` | writes `.defattr` + `.cxc`; rendered in ChimeraX on 8EF6 |
+| 3 | b, c, d | `figure_03/code/make_chimerax_param_maps.py` | writes `.defattr` + `.cxc`; rendered in ChimeraX on 8EF6. **d** colours positions whose effect on one or both parameters exceeds 1 SD of the synonymous population |
 | 4 | a | — | cartoon |
 | 4 | b | `figure_04/code/variant_morphine_vs_fentanyl_ec50_q126.py` | |
 | 4 | c | `figure_04/code/morphine_fentanyl_ec50_reweighting_latest.py` + `chimerax/` | EC50 LOF-bias on 8EF5/8EF6 |
@@ -76,7 +76,7 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | 8 | a, b | `figure_08/code/build_merged_class_assets.py` -> `chimerax_assets/` | LOF/GOF class networks, rendered on 8EFQ |
 | 8 | c | — | ChimeraX zoom on 9PXU |
 | 8 | d | — | TRUPATH Gi1 BRET (Prism) |
-| 8 | e, f | `figure_08/code/fig8_bottom_row.py` | double-mutant bars + rescue heatmap |
+| 8 | e, f | `figure_08/code/fig8_bottom_row.py` | double-mutant bars + rescue heatmap (WT reference row on top) |
 | S1 | a | — | ChemDraw |
 | S1 | b, c | `figure_S01/code/camp_trupath_composite.py` (or `camp_drc_curves.py` / `trupath_drc_curves.py`) | |
 | S1 | d | `figure_S01/code/build_param_table.py` -> `render_param_table.py` | |
@@ -103,8 +103,9 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | S7 | e | `figure_S07/code/pca_biplot_motifs_50mm.py` | |
 | S8 | — | — | cryoSPARC processing; no repository code |
 | S9 | a–d | `figure_S09/code/build_class_node_edge_plots.py` | |
-| S10 | a | `figure_S10/code/supp_doubles.py` | |
-| S10 | b | — | flow-cytometry surface expression (Prism) |
+| S10 | a, b | `figure_S10/code/fig_119_panel.py` | **new** — A119L identification: position waterfall + all 19 substitutions at 119; one script renders the whole figure |
+| S11 | a | `figure_S11/code/supp_doubles.py` | |
+| S11 | b | — | flow-cytometry surface expression (Prism) |
 
 ## Running the code
 
@@ -114,7 +115,7 @@ from their own location (`Path(__file__).resolve().parents[N]`). They are copied
 **verbatim**, so paths must be repointed at `data/` before re-running. Each figure README
 lists the original repository path of every script together with the inputs it reads.
 
-Requirements: Python 3.11 (numpy, pandas, scipy, matplotlib, openpyxl, adjustText) and
+Requirements: Python 3.11 (numpy, pandas, scipy, matplotlib, openpyxl, adjustText, pyarrow, pyyaml) and
 R 4.3 (tidyverse, patchwork, dendextend, ggrepel, colorspace, scales). Structure panels
 additionally need ChimeraX 1.7+.
 
@@ -127,7 +128,7 @@ Figure style throughout: Helvetica 6 pt, black text, 0.5 pt rules, vector PDF wi
   availability section. The per-bin variant **count** tables derived from them *are*
   included, in `data/variant_counts/` (532 files, 194 MB).
 * **Prism projects for the low-throughput BRET and flow assays** (figures 7d–f, 8d,
-  S10b). The double-mutant DRC points extracted from Prism *are* included, in
+  S11b). The double-mutant DRC points extracted from Prism *are* included, in
   `data/pharmacology/doubles/`.
 * **Illustrator/ChemDraw cartoon panels** and cryo-EM processing (cryoSPARC).
 

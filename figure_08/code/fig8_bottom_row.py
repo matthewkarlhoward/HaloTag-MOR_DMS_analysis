@@ -115,26 +115,32 @@ def build():
                bbox_to_anchor=(0.5, 1.0), handlelength=0.9, handleheight=1.0,
                columnspacing=0.7, handletextpad=0.3)
 
-    # ---------- right: double-mutant activation heatmap (the purple bar) ----------
+    # ---------- right: activation heatmap; WT reference row on top ----------
     axh = fig.add_subplot(gs[0, 1])
-    M = np.array([[100 * window(df, lig, f"119L_{tok}") / ref
-                   for lig in LIGANDS] for tok, _ in PARTNERS])
+    wt_row = [100 * window(df, lig, "WT") / ref for lig in LIGANDS]
+    dbl = [[100 * window(df, lig, f"119L_{tok}") / ref for lig in LIGANDS]
+           for tok, _ in PARTNERS]
+    M = np.array([wt_row] + dbl)                      # row 0 = WT reference
+    ylabels = ["WT"] + [lab for _, lab in PARTNERS]
+    nr = M.shape[0]
     im = axh.imshow(M, cmap=DOUBLE_CMAP, vmin=0, vmax=110, aspect="auto")
     axh.set_xticks(range(len(LIGANDS)))
     axh.set_xticklabels(LIGANDS)                     # horizontal, bar order
-    axh.set_yticks(range(len(PARTNERS)))
-    axh.set_yticklabels([lab for _, lab in PARTNERS])
+    axh.set_yticks(range(nr))
+    axh.set_yticklabels(ylabels)
     axh.set_title("A119L + mutant activation (% of WT DAMGO)", pad=4)
-    for i in range(M.shape[0]):
+    for i in range(nr):
         for j in range(M.shape[1]):
             v = M[i, j]
             v = 0.0 if abs(v) < 0.5 else v            # avoid "-0"
             axh.text(j, i, f"{v:.0f}", ha="center", va="center", fontsize=6,
                      color="black")
     axh.set_xticks(np.arange(-.5, len(LIGANDS), 1), minor=True)
-    axh.set_yticks(np.arange(-.5, len(PARTNERS), 1), minor=True)
+    axh.set_yticks(np.arange(-.5, nr, 1), minor=True)
     axh.grid(which="minor", color="white", linewidth=0.5)
     axh.tick_params(which="minor", length=0)
+    axh.plot([-.5, len(LIGANDS) - .5], [0.5, 0.5], color="black",
+             lw=0.5, zorder=6)                        # WT / mutant divider
     for sp in axh.spines.values():                   # 0.5pt black border
         sp.set_visible(True)
         sp.set_edgecolor("black")

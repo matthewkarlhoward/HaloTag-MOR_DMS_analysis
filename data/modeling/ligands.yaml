@@ -1,0 +1,149 @@
+# Ligand panel metadata for the mu-opioid receptor DMS multidrug screen.
+#
+# emax_trupath : WT TRUPATH Gi1 Emax, % of DAMGO
+#                (trupath_vs_camp_efficacy/param_table.csv, tp_emax column)
+# emax_camp    : WT transcriptional cAMP Emax, % of DAMGO (camp_emax column)
+# class        : efficacy bin, matching plots/radars/radars.Rmd conventions
+# is_holdout   : excluded from the rank-1 kappa fit; used as the Phase 1 test set
+# n_replicates : FACS sort replicates present in dms_data/multidrug_counts
+#
+# NOTE: SR17018 and MCAM have no WT TRUPATH measurement in param_table.csv.
+#       SR17018 is treated as an agonist column in the fit but is dropped from
+#       the s_l vs Emax diagnostic. MCAM (methocinnamox) is an antagonist and
+#       is held out.
+
+FSK:
+  pretty: Forskolin only
+  class: no_ligand
+  emax_trupath: null
+  emax_camp: null
+  is_holdout: true
+  n_replicates: 7
+
+Naloxone:
+  pretty: Naloxone
+  class: antagonist
+  emax_trupath: 14.9
+  emax_camp: 21.2
+  is_holdout: true
+  n_replicates: 3
+
+Naltrexone:
+  pretty: Naltrexone
+  class: antagonist
+  emax_trupath: 15.0
+  emax_camp: null
+  is_holdout: true
+  n_replicates: 3
+
+MCAM:
+  pretty: Methocinnamox
+  class: antagonist
+  emax_trupath: null
+  emax_camp: null
+  is_holdout: true
+  n_replicates: 1
+
+Nalbuphine:
+  pretty: Nalbuphine
+  class: weak
+  emax_trupath: 47.0
+  emax_camp: 65.6
+  is_holdout: false
+  n_replicates: 4
+
+Buprenorphine:
+  pretty: Buprenorphine
+  class: weak
+  emax_trupath: 60.2
+  emax_camp: 44.1
+  is_holdout: false
+  n_replicates: 3
+
+Butorphanol:
+  pretty: Butorphanol
+  class: weak
+  emax_trupath: 64.8
+  emax_camp: 74.2
+  is_holdout: false
+  n_replicates: 3
+
+MP:
+  pretty: MP
+  class: weak
+  emax_trupath: 65.9
+  emax_camp: 93.8
+  is_holdout: false
+  n_replicates: 3
+
+TRV130:
+  pretty: Oliceridine (TRV130)
+  class: intermediate
+  emax_trupath: 77.2
+  emax_camp: 103.0
+  is_holdout: false
+  n_replicates: 4
+
+PZM21:
+  pretty: PZM21
+  class: intermediate
+  emax_trupath: 78.7
+  emax_camp: 97.2
+  is_holdout: false
+  n_replicates: 3
+
+Methadone:
+  pretty: Methadone
+  class: intermediate
+  emax_trupath: 83.3
+  emax_camp: 92.3
+  is_holdout: false
+  n_replicates: 3
+
+SR17018:
+  pretty: SR17018
+  class: intermediate
+  emax_trupath: null
+  emax_camp: null
+  is_holdout: false
+  n_replicates: 3
+
+C6guano:
+  pretty: C6-guano
+  class: strong
+  emax_trupath: 88.3
+  emax_camp: null
+  is_holdout: false
+  n_replicates: 3
+
+carfentanil:
+  pretty: Carfentanil
+  class: strong
+  emax_trupath: 97.2
+  emax_camp: 103.1
+  is_holdout: false
+  n_replicates: 4
+
+Fentanyl:
+  pretty: Fentanyl
+  class: strong
+  emax_trupath: 96.4
+  emax_camp: 99.3
+  is_holdout: false
+  n_replicates: 3
+
+Morphine:
+  pretty: Morphine
+  class: strong
+  emax_trupath: 98.8
+  emax_camp: 89.2
+  is_holdout: false
+  n_replicates: 4
+
+DAMGO:
+  pretty: DAMGO
+  class: strong
+  emax_trupath: 100.0
+  emax_camp: 100.0
+  is_holdout: false
+  n_replicates: 7

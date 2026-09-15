@@ -1,23 +1,53 @@
-# Supplemental figure 10 — Double mutation BRET experiments
+# Supplemental figure 10 — Identification of the A119L change-of-efficacy variant
 
-**a** TRUPATH Gi1 dose-responses testing the addition of A119L to K100D/N, V175N, R278D
-and I280A/K, across DAMGO, PZM21, nalbuphine and naloxone. Four traces per panel: WT,
-A119L, the partner single, and the A119L + partner double.
+Both panels come from **one script**, which renders the complete 165 × 175 mm figure
+rather than panels to be assembled elsewhere.
 
-| Step | Script | Original path | Reads | Writes |
-|---|---|---|---|---|
-| 1 | `code/extract_prism_points.py` | `plots/doubles/` | the two source `.prism` projects (not distributed) | `data/pharmacology/doubles/doubles{1,2}_points.csv` |
-| 2 | `code/drc_fit.py` | `plots/doubles/` | — | the shared `fit_drc()` sigmoid + F-test |
-| 3 | `code/supp_doubles.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/supp_doubles_rescue_all.pdf` (also `_series1`, `_series2`) |
+| Script | Original path | Reads | Writes |
+|---|---|---|---|
+| `code/fig_119_panel.py` | `mor-dms-modeling/src/` | `data/modeling/scores_long.parquet`, `data/modeling/ligands.yaml` | `panels/figF_position119_all_substitutions.pdf` (+ `.png`) |
 
-`drc_doubles_grid_supp.py` is the earlier per-series grid layout.
+Supporting modules, copied alongside: `code/common.py` (paths, the 65–355 position window,
+zone definitions) from `mor-dms-modeling/src/`, and `code/plots.py` (the `figure()` /
+`save()` millimetre canvas helpers) from `mor_efficacy/src/`.
+`code/fig_waterfall_pos.py` is the standalone version of panel **a**, kept for reference —
+`fig_119_panel.py` redraws the waterfall internally rather than importing it.
 
-Assay conventions are the same as figure 8e–f: signal-down, activation window
-`1 − Top = −Span`, the two runs co-scaled and pooled for WT and A119L (n = 10), no
-re-normalisation to DAMGO. Fitting keeps the fitted Span (any sign) when the
-extra-sum-of-squares F-test against a flat line gives p < 0.05, otherwise the variant is
-called "no response" and drawn flat.
+**a** Position-level waterfall ranking receptor positions by the *antagonist-to-agonist
+switch* axis: the mean naloxone/naltrexone score minus that variant's own basal
+(forskolin-only) score. Position 119 ranks **#1 of 246**. Only positions with at least
+**5** scored substitutions enter the ranking, and naloxone and naltrexone must agree to
+within **0.05** — drawing the two antagonists separately rather than pooling them makes
+that agreement visible as a consistency check.
 
-**b** Relative surface expression of every variant tested, by flow cytometry (mean
-SureLight APC fluorescence, CMV-Flag-μOR). All variants are within two-fold of wild type
-(red dotted lines). Drawn in Prism; no repository code.
+**b** All 19 substitutions at position 119, each panel plotting the DMS score against
+wild-type ligand efficacy (TRUPATH Emax, % DAMGO) with a fitted slope. Panels are ordered
+by that slope, most negative first: a steep negative slope is the "every ligand becomes a
+fuller agonist" phenotype, strongest at **A119I (−0.130)**, **A119P (−0.125)** and
+**A119L (−0.096)**. The basal (no ligand, FSK) point sits on its own broken segment of
+the x axis rather than being carried across as a level line, because it is not a ligand
+efficacy. Per-substitution surface expression is annotated in grey at the bottom left of
+each panel.
+
+## Position window
+
+Analysis is restricted to positions **65–355** — TM1 through helix 8. The N-terminus
+(1–64) and C-terminal tail (356–400) are disordered in every μOR structure, carry no
+Ballesteros–Weinstein number and have no reliable structural covariates. They are
+filtered *before* analysis rather than after, because they change the permutation/FDR
+calibration, the conditioning quantiles, the expression LOWESS fit and the zone
+denominators. This is the same window used for the ligand-profile clustering in
+figure 5b.
+
+## Data
+
+`data/modeling/scores_long.parquet` is the long-format per-variant × per-ligand score
+table used by the modeling analyses, and `data/modeling/ligands.yaml` carries each
+ligand's TRUPATH Emax and its holdout flag — the x-axis values in panel **b** and the
+ligand filtering in panel **a** both come from it.
+
+## Note on paths
+
+`fig_119_panel.py` prepends two absolute `sys.path` entries pointing into the original
+analysis repository. Repoint those at `figure_S10/code/` before re-running, since
+`common.py` and `plots.py` are copied here.

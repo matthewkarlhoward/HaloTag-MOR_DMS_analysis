@@ -26,13 +26,13 @@ integration version chain, so the route chosen here is the one to stay on.
 Already built from the `v1.0.0` tag:
 
 ```
-HaloTag-MOR_DMS-v1.0.0.zip     158 MB, 854 files
+HaloTag-MOR_DMS-v1.1.0.zip     ~205 MB, ~1,410 files
 ```
 
 Rebuild it any time with:
 
 ```bash
-git archive --format=zip --prefix=HaloTag-MOR_DMS-v1.0.0/ -o HaloTag-MOR_DMS-v1.0.0.zip v1.0.0
+git archive --format=zip --prefix=HaloTag-MOR_DMS-v1.1.0/ -o HaloTag-MOR_DMS-v1.1.0.zip v1.1.0
 ```
 
 Well under Zenodo's 50 GB per-record limit.
@@ -116,5 +116,5 @@ the repository stay in step.
 
 Sheet `07_validation_pharmacology` of the supplementary workbook covers the double
 mutants only. The single-mutant BRET behind figures 7d–f and the flow cytometry behind
-supplemental figure 10b are still Prism-only. Worth resolving **before** publishing the
+supplemental figure 11b are still Prism-only. Worth resolving **before** publishing the
 Zenodo record, since files cannot be edited afterwards without a new version.

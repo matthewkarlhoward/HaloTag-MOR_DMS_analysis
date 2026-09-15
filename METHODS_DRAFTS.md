@@ -97,7 +97,7 @@ covering V175N, I280A and I280K (6 biological replicates, 9 concentrations). Wil
 were co-scaled on their shared wild-type and A119L arms (r = 0.98) and were **not**
 renormalised to DAMGO, since wild type is the noisiest anchor. All variants used here
 expressed within two-fold of wild-type μOR by cell-surface flow cytometry (supplemental
-figure 10b).
+figure 11b).
 
 **Curve fitting.** The assay reads signal-down: baseline BRET ratio ≈ 1 and activation
 decreases the ratio, so the activation window of a curve is 1 − Top = −Span. Replicate

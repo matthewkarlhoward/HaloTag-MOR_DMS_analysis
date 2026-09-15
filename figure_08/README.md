@@ -44,6 +44,9 @@ rescue heatmap across all partners.
 | 2 | `code/drc_fit.py` | `plots/doubles/` | — | `fit_drc()`: unconstrained three-parameter sigmoid plus an extra-sum-of-squares F-test against a flat line. Fitted Span kept (any sign) if p < 0.05, otherwise "no response", Span = 0, drawn flat. |
 | 3 | `code/fig8_bottom_row.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/fig8_bottom_row.pdf` (exact 165 x 40 mm) |
 
+The heatmap carries a **wild-type reference row on top**, separated from the double-mutant
+rows by a rule, so each A119L + partner value can be read against WT in the same units.
+
 Signal-down assay: baseline Bottom ≈ 1, activation drives the BRET ratio down, so the
 activation window is `1 − Top = −Span`. Percentages are window / WT-DAMGO window x 100.
 The two double-mutant runs are co-scaled (shared-anchor r = 0.98) and pooled for WT and

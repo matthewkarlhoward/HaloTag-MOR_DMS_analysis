@@ -52,6 +52,14 @@ and its anchors.
 
 Terminology: positions/variants get **scores**, ligands get **loadings**.
 
+## modeling/ — inputs for the A119L identification figure
+
+`scores_long.parquet` is the long-format per-variant x per-ligand score table used by the
+modeling analyses, and `ligands.yaml` carries each ligand's TRUPATH Emax and holdout flag.
+Together they drive supplemental figure 10 (`figure_S10/code/fig_119_panel.py`): the
+waterfall that nominates position 119, and the per-substitution efficacy slopes.
+Original paths: `mor_efficacy/data/processed/` and `mor_efficacy/configs/`.
+
 ## annotations/
 
 GPCRdb OPRM1 numbering + secondary structure (`GPCRdb_OPRM1_table.csv`), class A motif
@@ -69,7 +77,7 @@ AlphaMissense, MTR and gnomAD tables. Original: `annotations/`.
 | `param_table.csv` | Derived table behind supplemental figure 1d. |
 | `doubles/doubles{1,2}.xlsx` | Prism fit tables for the two double-mutant BRET runs. |
 | `doubles/doubles{1,2}_points.csv` | Replicate-level points extracted from the source `.prism` projects by `extract_prism_points.py`. |
-| `doubles/doubles_merged_points.csv` | The two runs merged (WT and A119L pooled, n = 10); input to figures 8e–f and S10a. |
+| `doubles/doubles_merged_points.csv` | The two runs merged (WT and A119L pooled, n = 10); input to figures 8e–f and S11a. |
 
 Signal-down convention: baseline ≈ 1, activation drives BRET ratio down, so the
 activation window is `1 − Top = −Span`.
