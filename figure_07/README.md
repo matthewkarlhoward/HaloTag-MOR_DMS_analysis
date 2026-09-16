@@ -20,7 +20,21 @@ panel's position set is defined by subtracting a filter from it.
 the active state, first-shell positions in the latent/intermediate state, and all
 remaining ICL1/ICL2/ICL3/H8 positions from the GPCRdb secondary-structure annotation.
 The published panel then keeps only positions whose mean missense effect across the 15
-ligands falls more than `LOF_THRESHOLD = -0.05` below the synonymous mean, leaving 30. The G-protein contact class shown along the y-axis is Active / Intermediate /
+ligands falls more than `LOF_THRESHOLD = -0.05` below the synonymous mean, leaving 30.
+
+| Step | Positions |
+|---|---|
+| G protein first shell, 29 active structures | 35 |
+| G protein first shell, latent state (9ODL, 9PXW), Gα only | 18 |
+| — active only / both / intermediate only | 27 / 8 / 10 |
+| Remaining ICL1–3 and H8 with no G protein contact | 14 |
+| **Candidate set** | **59** |
+| Retained by the mean-effect filter | **30** |
+
+Recomputed from the deposited data; reproduces the panel's 30 rows exactly. Note the two
+distinct thresholds: `LOF_THRESHOLD = -0.05` on the mean effect selects *which positions
+appear*, while `LOF_SD = 2` (per ligand) defines the *cell values*. No surface-expression
+filter is applied here, unlike the figure 8 network analysis. The G-protein contact class shown along the y-axis is Active / Intermediate /
 Both / NA, derived from which state's first shell a position appears in.
 
 | Script | Original path | Writes |

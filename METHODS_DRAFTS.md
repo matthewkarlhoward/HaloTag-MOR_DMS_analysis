@@ -78,44 +78,79 @@ Figure 8 were taken from chain R of the active-state structure 8EFQ.
 
 ---
 
-## Determination of G protein interface residues
+## Identification of G protein contacts in the active and latent states
 
 Receptor–G protein contacts were determined with the same geometric criterion used for
-ligand contacts. For every μOR structure containing a resolved Gα subunit, the minimum
-all-atom and side-chain distance was computed from each receptor residue to Gα.
-**First-shell** residues were those with a side-chain atom within **5.0 Å** of any Gα
-atom; **second-shell** residues were those not already in the first shell with a
-side-chain atom within **4.5 Å** of a first-shell residue's side chain. As elsewhere,
-a single manually verified receptor chain and Gα chain were used per structure, and
-structures without a resolved Gα were excluded.
+ligand contacts, applied to Gα instead of the ligand. For each structure the minimum
+all-atom and side-chain distance was computed from every receptor residue to the Gα
+subunit. A residue was assigned to the **first shell** if any side-chain atom lay within
+**5.0 Å** of any Gα atom, and to the **second shell** if it was not already first shell
+and any side-chain atom lay within **4.5 Å** of a first-shell residue's side chain. As
+throughout, a single manually verified receptor chain and Gα chain were used per
+structure, and structures without a resolved Gα were excluded.
 
-Two contact sets were defined. The **active-state** set pooled first-shell positions
-across the **29** G protein-bound active structures. The **latent/intermediate** set was
-taken from **9ODL** and **9PXW**, in which the Gα<sub>i</sub> C terminus engages the
-receptor extrahelically rather than inserting into the core; only Gα contacts were
-counted for this set (Gβ contacts were excluded). Each intracellular position was then
-classified as contacting G protein in the active state only, the intermediate state only,
-or both.
+Contacts were then resolved by receptor state, because the two states engage the G
+protein differently and this distinction is what Figure 7c is built on.
 
-## Intracellular sensitivity map
+**Active state.** First-shell positions were pooled across the **29** G protein-bound
+active-state structures, in which the Gα<sub>i</sub> C-terminal α5 helix is inserted into
+the receptor core. This yielded **35** positions.
 
-Candidate positions for Figure 7c were the union of the two contact sets above together
-with every remaining ICL1, ICL2, ICL3 and helix 8 position, assigned from the GPCRdb
-secondary-structure annotation. Positions in that last group contact G protein in
-neither state and are labelled accordingly.
+**Latent/intermediate state.** Contacts were taken from **9ODL** and **9PXW**, in which
+the Gα<sub>i</sub> C terminus engages the receptor extrahelically, before α5 insertion.
+Only Gα contacts were counted; Gβ contacts present in these structures were excluded.
+This yielded **18** positions. 9PXW is deliberately excluded from the active-state pool
+and counted only here, even though it contains a resolved Gα, because the receptor is not
+in the canonical active conformation.
 
-Candidates were retained for display if their mean missense effect across the fifteen
-ligands fell more than **0.05** below the synonymous mean, giving the **30** positions
-shown. The heatmap value is the **percentage of missense variants at that position that
-are loss-of-function for that ligand**, where loss-of-function is an effect more than
-**two standard deviations** below that ligand's own synonymous mean — the threshold is
-computed per ligand, not pooled. Values run from 0% (no loss-of-function variants at that
-position for that ligand) to 100% (all variants loss-of-function), on a sequential
-white-to-red scale. Ligands are ordered by efficacy class and the ligand-free
-(forskolin-only) condition is shown first.
+Each position was then classified by which state or states it contacts the G protein in:
+**27 active only**, **8 both**, and **10 intermediate only**. This classification is the
+colour strip along the y-axis of Figure 7c.
 
-No surface-expression filter was applied here, in contrast to the residue-network
-analysis, where nodes are restricted to variants expressing near wild-type levels.
+## Position selection for Figure 7c
+
+Candidate positions were the union of three sets: the active-state first shell (35), the
+latent-state first shell (18), and every remaining intracellular position — all of ICL1,
+ICL2, ICL3 and helix 8 not already captured by either contact set, assigned from the
+GPCRdb secondary-structure annotation (**14** positions). Positions in this third group
+contact G protein in neither resolved state and are labelled as such; they are included
+so that the map is not restricted a priori to residues that a structure already
+nominates. The candidate set is **59** positions.
+
+Candidates were then filtered on functional effect. For each position the mean missense
+effect was computed per ligand and averaged across the fifteen ligands, and positions
+were retained if that average fell more than **0.05** below the synonymous mean. **30**
+positions were retained, and these are the rows of Figure 7c.
+
+The heatmap value is a separate quantity from the selection criterion. For each position
+and each ligand it is the **percentage of missense variants at that position that are
+loss-of-function for that ligand**, where loss-of-function is defined as an effect more
+than **two standard deviations** below that ligand's own synonymous mean. The threshold
+is computed per ligand rather than pooled, so a ligand with a wider synonymous
+distribution is held to a correspondingly wider criterion. Values run from 0% (no
+loss-of-function variants at that position for that ligand) to 100% (all variants
+loss-of-function), on a sequential white-to-red scale. The ligand-free (forskolin-only)
+condition is shown first and ligands are then ordered by efficacy class.
+
+No surface-expression filter was applied. This differs from the residue-network analysis,
+where nodes are restricted to variants expressing near wild-type levels; Figure 7c is a
+per-position sensitivity map rather than a network node call, and filtering on expression
+would remove positions whose signalling defect is genuine but expression-linked.
+
+### Funnel
+
+| Step | Positions |
+|---|---|
+| G protein first shell, 29 active structures | 35 |
+| G protein first shell, latent state (9ODL, 9PXW) | 18 |
+| — active only / both / intermediate only | 27 / 8 / 10 |
+| Remaining ICL1–3 and H8 with no G protein contact | 14 |
+| **Candidate set** | **59** |
+| Retained: mean missense effect > 0.05 below synonymous | **30** |
+
+The 30: K100, T103, A104, T105, D166, R167, A170, V171, P174, V175, A177, L178, F180,
+R181, M257, I258, R260, L261, K262, K273, R278, R279, I280, V284, D342, N344, F345, K346,
+R347, F349.
 
 ---
 
