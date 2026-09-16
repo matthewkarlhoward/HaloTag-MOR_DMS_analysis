@@ -1,0 +1,19 @@
+# Python dependencies for the figure scripts.
+#
+# Versions below are those present on the machine where this export was
+# assembled (Python 3.14.2). The figures themselves were produced over roughly a
+# year, so the exact versions that rendered any given panel may differ. Nothing
+# here depends on a pinned version; these are recorded for reproducibility
+# rather than enforced.
+
+numpy==2.4.3
+pandas==3.0.1
+scipy==1.17.1
+matplotlib==3.10.8
+openpyxl==3.1.5          # reads .xlsx (pharmacology tables)
+adjustText==1.3.0        # label repulsion, per the figure house style
+
+# NOT installed on the assembly machine, but REQUIRED to run parts of this repo:
+pyarrow                  # supplemental figure 10 reads .parquet
+pyyaml                   # supplemental figure 10 reads ligands.yaml
+xlsxwriter               # optional; the workbook builder falls back to openpyxl

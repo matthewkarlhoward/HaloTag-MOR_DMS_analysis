@@ -1,0 +1,11 @@
+# R dependencies for the figure scripts (R 4.3+).
+# install.packages(c("tidyverse","patchwork","readxl","dendextend",
+#                    "colorspace","scales","ggrepel"))
+
+tidyverse      # dplyr / ggplot2 / readr / tidyr / tibble, used by every R script
+patchwork      # multi-panel assembly (heatmaps, contact maps)
+readxl         # pharmacology .xlsx
+dendextend     # ligand dendrogram, figure 5b
+colorspace     # radar palettes, figure 6c
+scales         # axis formatting
+ggrepel        # non-overlapping labels (network plots)

@@ -12,6 +12,10 @@ mutational pharmacology).
 ```
 data/            all input tables, per-bin variant counts, structures and pharmacology
 supplementary_table/  consolidated supplementary data workbook (8 sheets) + CSVs
+REPRODUCING.md   what can be regenerated, in what order, and what cannot
+MANIFEST.sha256  size + SHA-256 for every file under data/
+requirements.txt / r-requirements.txt   Python and R dependencies
+CHANGELOG.md     what changed between versions
 shared/          upstream pipeline scripts + plotting theme shared by many figures
 figure_01 .. 08/ one folder per main figure
 figure_S01 .. S11/ one folder per supplemental figure
