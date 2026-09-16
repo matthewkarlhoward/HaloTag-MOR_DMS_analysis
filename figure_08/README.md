@@ -35,20 +35,33 @@ Network definition:
 **d** TRUPATH Gi1 dose-responses for WT vs A119L across DAMGO, PZM21, nalbuphine and
 naloxone. Prism.
 
-**e, f** Double-mutant summary: %-activation bars for the K100N series and the A119L
-rescue heatmap across all partners.
+**e** Cartoon: wild type to intracellular mutants to A119L to the double mutants, asking
+whether the sites are functionally coupled and whether efficacy is recovered. Illustrator.
 
-| Step | Script | Original path | Reads | Writes |
-|---|---|---|---|---|
-| 1 | `code/extract_prism_points.py` | `plots/doubles/` | the two source `.prism` projects (not distributed) | `data/pharmacology/doubles/doubles{1,2}_points.csv` |
-| 2 | `code/drc_fit.py` | `plots/doubles/` | — | `fit_drc()`: unconstrained three-parameter sigmoid plus an extra-sum-of-squares F-test against a flat line. Fitted Span kept (any sign) if p < 0.05, otherwise "no response", Span = 0, drawn flat. |
-| 3 | `code/fig8_bottom_row.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/fig8_bottom_row.pdf` (exact 165 x 40 mm) |
+**f** Heatmap of A119L + mutant activation as % of the wild-type DAMGO Emax, with a
+wild-type reference row above a divider.
 
-The heatmap carries a **wild-type reference row on top**, separated from the double-mutant
-rows by a rule, so each A119L + partner value can be read against WT in the same units.
+| Script | Original path | Reads | Writes |
+|---|---|---|---|
+| `code/heatmap_double_activation.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/heatmap_double_activation.pdf` (exactly 40 x 50 mm) |
 
-Signal-down assay: baseline Bottom ≈ 1, activation drives the BRET ratio down, so the
-activation window is `1 − Top = −Span`. Percentages are window / WT-DAMGO window x 100.
-The two double-mutant runs are co-scaled (shared-anchor r = 0.98) and pooled for WT and
-A119L (n = 4 + 6 = 10); they are **not** re-normalised to DAMGO, because WT is the
-noisiest anchor.
+**d** and **g** Dose-response curves, four ligands per panel, coloured by efficacy class:
+wild type and A119L (**d**), K100N and A119L+K100N (**g**). All four panels come from one
+script and one file.
+
+| Script | Original path | Reads | Writes |
+|---|---|---|---|
+| `code/rank_example_curves.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/rank_example_curves.pdf` (91 x 97 mm, 2 x 2 grid) |
+
+Its docstring still describes WT vs A119L+V175N from an earlier version; the file it
+actually writes is the WT / A119L / K100N / A119L+K100N grid used in the figure.
+
+Both scripts use `code/drc_fit.py` for the F-test-gated sigmoid, and report activation as
+the window (-Span, 0 when the F-test fails) as a percentage of the wild-type DAMGO window.
+`fig8_bottom_row.py` produced the previous version of this row - a bar chart plus heatmap -
+and was dropped when the bar chart left the figure and the heatmap moved to its own script.
+
+Per-variant fitted parameters for every curve are deposited in
+`data/pharmacology/doubles/doubles_drc_parameters.csv` and `doubles_metrics_table.csv`,
+and in sheet `07_validation_pharmacology` of the supplementary workbook.
+

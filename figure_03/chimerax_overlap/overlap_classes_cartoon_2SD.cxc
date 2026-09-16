@@ -1,0 +1,20 @@
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+delete ~/R
+delete :CLR
+delete solvent
+hide atoms
+show /R cartoons
+color /R #e8e8e8
+show :MOI atoms
+style :MOI sphere
+color :MOI #f5e663
+color :MOI byhetero
+color /R:77,110,125,149,150,165,166,168,174,198,203,241,243,254,258,260,280,291,294,298,299,321,326,327,334,342,344 #7b3fa0 target c
+color /R:73,76,122,135,173,178,182,190,193,199,201,204,208,221,239,244,250,279,293,295,296,301,302,311,318,320,323,324,328 #1f4fd8 target c
+color /R:84,88,91,92,108,111,112,113,114,115,116,118,123,143,153,154,156,157,160,161,163,164,167,169,170,171,177,186,189,194,195,196,197,200,202,242,245,247,249,251,253,257,261,300,325,332,333,335,338 #d42b2b target c
+set bgColor white
+lighting soft
+graphics silhouettes true
+view matrix camera -0.66813,0.056198,-0.74192,38.605,0.20656,0.97196,-0.11239,102.95,0.7148,-0.22835,-0.661,35.991
+view matrix models #1,-0.85867,-0.19853,0.47252,221.61000,0.20054,0.71828,0.66622,-76.67700,-0.47166,0.66683,-0.57695,181.08000

@@ -55,7 +55,8 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | 2 | d | `figure_02/code/morphine_all_fits_overlay.py` | all ~10k morphine fits + synonymous mean |
 | 2 | e | `figure_02/code/position_combo_morphine.py` (`V83`) | example position curves + Emax/EC50 strips |
 | 3 | a | `figure_03/code/morphine_variant_ec50_vs_emax.py` | per-variant EC50 x Emax landscape |
-| 3 | b, c, d | `figure_03/code/make_chimerax_param_maps.py` | writes `.defattr` + `.cxc`; rendered in ChimeraX on 8EF6. **d** colours positions whose effect on one or both parameters exceeds 1 SD of the synonymous population |
+| 3 | b, c | `figure_03/code/make_chimerax_param_maps.py` | writes `.defattr` + `.cxc`; rendered in ChimeraX on 8EF6 |
+| 3 | d | `figure_03/code/build_overlap_cartoon.py` (structure) + `venn_2SD.py` (Venn) | EC50/Emax overlap; Venn = 29 / 27 / 49 |
 | 4 | a | — | cartoon |
 | 4 | b | `figure_04/code/variant_morphine_vs_fentanyl_ec50_q126.py` | |
 | 4 | c | `figure_04/code/morphine_fentanyl_ec50_reweighting_latest.py` + `chimerax/` | EC50 LOF-bias on 8EF5/8EF6 |
@@ -66,7 +67,7 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | 5 | b | `figure_05/code/dms_stacked_heatmap_magma.R` | 15-ligand heatmap + correlation/ward.D2 dendrogram |
 | 5 | c | `figure_05/code/trupath_emax_bar.py` | TRUPATH Gi1 Emax, % DAMGO |
 | 5 | d, e, f | `figure_05/code/pca_three_panel_variant_kde.py` | one variant-level PCA fit for all three panels |
-| 5 | g | `shared/build_per_position_pc_table.py` | per-position PC2 painted on 8EFQ in ChimeraX |
+| 5 | g | `shared/build_per_position_pc_table.py` | per-position PC2 painted on 8EFQ in ChimeraX; colourbar is now labelled semantically (LOF strong agonists / LOF partial agonists) rather than +/- |
 | 6 | a | `figure_06/code/analyze_all_structures.py`, `analyze_chai_predictions.py` | shell definition; buprenorphine cryo-EM model in `data/structures/raw/experimental/buprenorphine.pdb` |
 | 6 | b | `figure_06/code/orthosteric_contact_map.R` | first-shell footprint heatmap |
 | 6 | c | `figure_06/code/radars_arcs.R` | per-class %LOF radars |
@@ -75,8 +76,9 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | 7 | d, e, f | — | TRUPATH Gi1 BRET, fitted and drawn in Prism |
 | 8 | a, b | `figure_08/code/build_merged_class_assets.py` -> `chimerax_assets/` | LOF/GOF class networks, rendered on 8EFQ |
 | 8 | c | — | ChimeraX zoom on 9PXU |
-| 8 | d | — | TRUPATH Gi1 BRET (Prism) |
-| 8 | e, f | `figure_08/code/fig8_bottom_row.py` | double-mutant bars + rescue heatmap (WT reference row on top) |
+| 8 | d, g | `figure_08/code/rank_example_curves.py` | WT / A119L and K100N / A119L+K100N curve grid (one file, 4 panels) |
+| 8 | e | — | cartoon: WT -> intracellular mutants -> A119L -> doubles |
+| 8 | f | `figure_08/code/heatmap_double_activation.py` | A119L + mutant activation, WT reference row on top |
 | S1 | a | — | ChemDraw |
 | S1 | b, c | `figure_S01/code/camp_trupath_composite.py` (or `camp_drc_curves.py` / `trupath_drc_curves.py`) | |
 | S1 | d | `figure_S01/code/build_param_table.py` -> `render_param_table.py` | |

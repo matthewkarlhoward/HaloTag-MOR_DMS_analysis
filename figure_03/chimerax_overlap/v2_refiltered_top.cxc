@@ -1,0 +1,25 @@
+# figure 3D v2_refiltered (top) -- same design, EC50 mean from sigmoid+no_baseline only
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+delete ~/R
+delete :CLR
+delete solvent
+hide atoms
+show /R cartoons
+color /R #f2f2f2
+show :MOI atoms
+style :MOI sphere
+color :MOI #f5e663
+color :MOI byhetero
+set bgColor white
+lighting soft
+graphics silhouettes true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/panel3d_values.defattr
+show /R:77,125,135,149,168,174,190,199,203,208,239,244,254,258,260,279-280,291,293,295,298-299,301-302,320-321,323,326-328,334 atoms
+style /R:77,125,135,149,168,174,190,199,203,208,239,244,254,258,260,279-280,291,293,295,298-299,301-302,320-321,323,326-328,334 sphere
+color byattribute r:ec50v /R:77,125,135,149,168,174,190,199,203,208,239,244,254,258,260,279-280,291,293,295,298-299,301-302,320-321,323,326-328,334 palette -8,white:-6.46,blue
+show /R:84,88,91,113,116,149,157,164,166-168,170-171,174,186,257,260-261,291,298,326,334-335,342 atoms
+style /R:84,88,91,113,116,149,157,164,166-168,170-171,174,186,257,260-261,291,298,326,334-335,342 sphere
+color byattribute r:emaxv /R:84,88,91,113,116,149,157,164,166-168,170-171,174,186,257,260-261,291,298,326,334-335,342 palette 0,red:0.46,white range 0,0.7
+view matrix camera -0.011909,0.9134,-0.40688,87.959,-0.25662,0.39051,0.88411,208,0.96644,0.11494,0.22975,156.05
+view matrix models #1,-0.93420,-0.35235,0.05589,306.67721,-0.08447,0.37066,0.92492,-63.26753,-0.34661,0.85935,-0.37603,118.95009

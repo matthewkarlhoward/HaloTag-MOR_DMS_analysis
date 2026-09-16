@@ -18,5 +18,26 @@ scripts as run (`render_all.cxc` renders every view; `workspace.cxc` sets up the
 Open the structure from `data/structures/raw/experimental/8ef6.cif`, `open` the
 `.defattr`, then run the matching `.cxc`.
 
-Panel **d** is the overlay view: EC50-sensitive positions (blue spheres) and
-Emax-sensitive positions (red spheres) on the same model.
+Panel **d** has two parts. The structure is the overlay view — EC50-sensitive positions
+(blue) and Emax-sensitive positions (red) on the same model, coloured by
+`code/build_overlap_cartoon.py` (with `code/build_chimerax_overlap.py` and
+`chimerax_overlap/` for the ChimeraX assets). The Venn beside it is:
+
+| Script | Original path | Writes |
+|---|---|---|
+| `code/venn_2SD.py` | `plots/ec50_emax_overlap/` | `panels/ec50_emax_venn_2SD.pdf` — EC50-only 29, both 27, Emax-only 49 |
+
+Both read `code/overlap_core.py`, which loads
+`data/curve_fits/refit_3param_robust_morphine.csv` and
+`data/structures/processed/ligand_distances/per_pdb_legacy/8ef6_distances.csv`.
+
+> **Threshold mismatch to check.** The figure legend says positions are coloured when
+> their effect "exceeds one standard deviation of the synonymous population", but the
+> Venn numbers (29/27/49) come from `venn_2SD.py`, which is the **2 SD** cutoff. At 1 SD
+> the counts are 150 EC50 / 143 Emax / 96 both (see
+> `code/EC50_EMAX_OVERLAP_README.md`). Either the structure and the Venn use different
+> thresholds, or the legend needs correcting.
+
+`code/EC50_EMAX_OVERLAP_README.md` documents the fuller analysis behind this panel, and
+is worth reading before describing the two sets as separable: they overlap 2-6x above
+chance at every stringency tested.

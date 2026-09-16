@@ -1,0 +1,20 @@
+# Render every overlap view to PNG
+windowsize 1600 1200
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_classes_side.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_classes_side.png width 1600 height 1200 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_classes_top.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_classes_top.png width 1600 height 1200 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_shared_only_side.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_shared_only_side.png width 1600 height 1200 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_shared_only_top.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/overlap_shared_only_top.png width 1600 height 1200 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/potency_selective_side.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/potency_selective_side.png width 1600 height 1200 supersample 3 transparentBackground true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/potency_selective_top.cxc
+windowsize 1600 1200
+save /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/potency_selective_top.png width 1600 height 1200 supersample 3 transparentBackground true

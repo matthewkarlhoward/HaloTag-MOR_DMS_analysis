@@ -1,0 +1,21 @@
+# potency-specific residual (side view)
+# blue = EC50 shift beyond the Emax-predicted; red = the reverse; white = moves on the shared axis
+close session
+open /Users/mkh/GitHub/mor_dms_analysis/structures/raw/experimental/8ef6.cif
+delete ~/R
+delete :CLR
+delete solvent
+hide atoms
+show /R cartoons
+color /R #f2f2f2
+show :MOI atoms
+style :MOI sphere
+color :MOI #f5e663
+color :MOI byhetero
+set bgColor white
+lighting soft
+graphics silhouettes true
+open /Users/mkh/GitHub/mor_dms_analysis/plots/ec50_emax_overlap/chimerax/potency_residual.defattr
+color byattribute r:potsel /R palette -0.75,#d42b2b:0,white:0.75,#1f4fd8 range -0.75,0.75 target c noValueColor #cccccc
+view matrix camera -0.66813,0.056198,-0.74192,38.605,0.20656,0.97196,-0.11239,102.95,0.7148,-0.22835,-0.661,35.991
+view matrix models #1,-0.85867,-0.19853,0.47252,221.61000,0.20054,0.71828,0.66622,-76.67700,-0.47166,0.66683,-0.57695,181.08000
