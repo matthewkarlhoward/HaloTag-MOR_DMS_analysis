@@ -123,11 +123,8 @@ One row per position × ligand where a contact was assigned, from experimental s
 where available and Chai-1 predictions otherwise (`structure` names the source). First
 shell = **side-chain atoms within 5.0 Å** of any ligand atom; second shell = not first
 shell and **side-chain atoms within 4.5 Å** of a first-shell residue's side chain. Where a
-ligand has several structures the closest approach is kept.
-
-> Note: the manuscript Results currently states these transposed (4.5 Å first, 5 Å second)
-> and as any-heavy-atom rather than side-chain. The rule above is what produced this
-> table; 7.4% of first-shell rows here fail the manuscript's stated rule.
+ligand has several structures the closest approach is kept. This matches the definition
+given in the manuscript Methods.
 
 ## 07_validation_pharmacology
 
