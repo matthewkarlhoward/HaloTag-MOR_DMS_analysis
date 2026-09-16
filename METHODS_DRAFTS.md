@@ -78,6 +78,49 @@ Figure 8 were taken from chain R of the active-state structure 8EFQ.
 
 ---
 
+## Determination of G protein interface residues
+
+Receptor–G protein contacts were determined with the same geometric criterion used for
+ligand contacts. For every μOR structure containing a resolved Gα subunit, the minimum
+all-atom and side-chain distance was computed from each receptor residue to Gα.
+**First-shell** residues were those with a side-chain atom within **5.0 Å** of any Gα
+atom; **second-shell** residues were those not already in the first shell with a
+side-chain atom within **4.5 Å** of a first-shell residue's side chain. As elsewhere,
+a single manually verified receptor chain and Gα chain were used per structure, and
+structures without a resolved Gα were excluded.
+
+Two contact sets were defined. The **active-state** set pooled first-shell positions
+across the **29** G protein-bound active structures. The **latent/intermediate** set was
+taken from **9ODL** and **9PXW**, in which the Gα<sub>i</sub> C terminus engages the
+receptor extrahelically rather than inserting into the core; only Gα contacts were
+counted for this set (Gβ contacts were excluded). Each intracellular position was then
+classified as contacting G protein in the active state only, the intermediate state only,
+or both.
+
+## Intracellular sensitivity map
+
+Candidate positions for Figure 7c were the union of the two contact sets above together
+with every remaining ICL1, ICL2, ICL3 and helix 8 position, assigned from the GPCRdb
+secondary-structure annotation. Positions in that last group contact G protein in
+neither state and are labelled accordingly.
+
+Candidates were retained for display if their mean missense effect across the fifteen
+ligands fell more than **0.05** below the synonymous mean, giving the **30** positions
+shown. The heatmap value is the **percentage of missense variants at that position that
+are loss-of-function for that ligand**, where loss-of-function is an effect more than
+**two standard deviations** below that ligand's own synonymous mean — the threshold is
+computed per ligand, not pooled. Values run from 0% (no loss-of-function variants at that
+position for that ligand) to 100% (all variants loss-of-function), on a sequential
+white-to-red scale. Ligands are ordered by efficacy class and the ligand-free
+(forskolin-only) condition is shown first.
+
+No surface-expression filter was applied here, in contrast to the residue-network
+analysis, where nodes are restricted to variants expressing near wild-type levels.
+
+---
+
+---
+
 ## Double-mutant TRUPATH BRET analysis
 
 **Constructs.** Double mutants combining A119L<sup>2.53</sup> with K100D<sup>12.49</sup>,
