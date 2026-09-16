@@ -1,0 +1,9 @@
+reference,ligand,model,n_ca,ca_rmsd,core_atoms,core_rmsd
+"9PXU (inactive, Nb6)",Naltrexone,MOR-Naltrexone/pred.rank_1.cif,287,2.75,22,1.59
+"9PXU (inactive, Nb6)",Nalbuphine,MOR-GNAI-Nalbuphine/pred.rank_0_nalbuphine.cif,287,2.98,22,1.63
+"9PXU (inactive, Nb6)",Butorphanol,MOR-GNAI-Butorphanol/pred.rank_0_butorphanol.cif,287,3.02,20,1.97
+"9PXU (inactive, Nb6)",Methadone,MOR-GNAI-Methadone/pred.rank_0_methadone.cif,287,3.08,6,1.32
+"9PXY (active, Gi1)",Naltrexone,MOR-Naltrexone/pred.rank_1.cif,286,1.32,22,0.62
+"9PXY (active, Gi1)",Nalbuphine,MOR-GNAI-Nalbuphine/pred.rank_0_nalbuphine.cif,286,1.24,22,0.75
+"9PXY (active, Gi1)",Butorphanol,MOR-GNAI-Butorphanol/pred.rank_0_butorphanol.cif,286,1.33,20,0.8
+"9PXY (active, Gi1)",Methadone,MOR-GNAI-Methadone/pred.rank_0_methadone.cif,286,1.5,6,1.13

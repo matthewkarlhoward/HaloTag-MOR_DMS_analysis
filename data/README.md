@@ -98,8 +98,10 @@ Copied from `structures/` in the analysis repo; see `structures/README.md` for t
 convention (all numbering harmonised to **human** μOR, mouse PDBs offset +2, key column
 `residue_number_human`).
 
-* `raw/experimental/` — 42 mmCIF files plus `buprenorphine.pdb`, the μOR–buprenorphine–miniGi
-  model determined in this study.
+* `raw/experimental/` — 41 mmCIF files plus `buprenorphine.pdb`, the μOR–buprenorphine–miniGi
+  model determined in this study. The set matches `metadata/pdb_state_table.csv` exactly.
+  (8Y71, a δ-opioid receptor PAM structure downloaded alongside the μOR PAM structures
+  8Y72/8Y73, was never used in any analysis and has been removed.)
 * `raw/chai_predicted/` — Chai-1 predictions for butorphanol, methadone, nalbuphine and naltrexone.
 * `processed/ligand_distances/` — per-residue ligand distances; `experimental_and_chai_combined.csv`
   is the canonical first/second-shell source for figure 6.

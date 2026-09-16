@@ -8,6 +8,19 @@ DAMGO (0.679). Validates the saturating-dose screens as an Emax proxy.
 |---|---|---|---|
 | `code/emax_vs_effect_scatter.R` | `plots/scatter/ec50_emax/` | `data/dms_scores/composite_dms_scores.csv` | `panels/emax_vs_effect_scatter.pdf` (165 x 50 mm) |
 
+**Morphinan-core RMSD to naloxone.** `code/morphinan_core_rmsd.py` superposes each Chai-1
+model's receptor onto a naloxone reference (Kabsch on shared Cα, positions 65–355), applies
+that transform to the ligand, and takes the RMSD over the maximum common substructure with
+naloxone — so agreement is measured in the pocket frame rather than by independently
+best-fitting the two ligands. Results in `code/morphinan_core_rmsd.csv`.
+
+Against **9PXY** (naloxone, active, Gi1-bound) the predicted cores agree to
+**0.62 / 0.75 / 0.80 Å** for naltrexone / nalbuphine / butorphanol. Against **9PXU**
+(inactive, Nb6-bound, the structure used for contact assignment) the same poses give
+1.59 / 1.63 / 1.97 Å — the difference is dominated by the active-versus-inactive receptor
+(Cα RMSD 3.0 Å vs 1.3 Å), not by the ligand pose. Methadone is not a morphinan and is
+excluded from the statement.
+
 **b, c** Structural overlays: the Chai-1 predicted poses (butorphanol, nalbuphine,
 naltrexone) against experimental structures, and DAMGO/morphine/methadone in the
 orthosteric site.
