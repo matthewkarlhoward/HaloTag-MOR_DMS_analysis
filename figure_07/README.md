@@ -31,6 +31,13 @@ ligands falls more than `LOF_THRESHOLD = -0.05` below the synonymous mean, leavi
 | **Candidate set** | **59** |
 | Retained by the mean-effect filter | **30** |
 
+**Active set (29):** 6DDE, 6DDF, 7SBF, 7SCG, 7T2G, 7T2H, 7U2K, 7U2L, 8Y72, 8Y73, 8EF5,
+8EF6, 8EFB, 8EFL, 8EFO, 8EFQ, 8F7Q, 8F7R, 8K9K, 8K9L, 9PXV, 9PXX, 9PXY, 9PY2, 9PY3, 9PY4,
+9WST, 9WSW, 9BQJ — Gi1 throughout except 8K9K/8K9L (Gi3) and 9WST/9WSW (Gz).
+**Latent set (2):** 9ODL, 9PXW.
+Structures with no resolved Gα are excluded: 4DKL, 5C1M, 7UL4, 8E0G, 8QOT, 9MQI, 9PXU,
+9BJK, 9WSV, 9WSX.
+
 Recomputed from the deposited data; reproduces the panel's 30 rows exactly. Note the two
 distinct thresholds: `LOF_THRESHOLD = -0.05` on the mean effect selects *which positions
 appear*, while `LOF_SD = 2` (per ligand) defines the *cell values*. No surface-expression
