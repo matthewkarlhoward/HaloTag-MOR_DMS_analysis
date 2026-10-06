@@ -105,13 +105,8 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 
 ## What is not here
 
-* **Raw sequencing reads (FASTQ).** Deposited separately; see the paper's Data
-  availability section. The per-bin variant **count** tables derived from them *are*
+* **Raw sequencing reads (FASTQ).** Depositing on SRA. The per-bin variant **count** tables derived from them *are*
   included, in `data/variant_counts/` (532 files, 194 MB).
-* **Prism projects for the low-throughput BRET and flow assays** (figures 7d–f, 8d,
-  S11b). The double-mutant DRC points extracted from Prism *are* included, in
-  `data/pharmacology/doubles/`.
-* **Illustrator/ChemDraw cartoon panels** and cryo-EM processing (cryoSPARC).
 
 ## Citation
 
