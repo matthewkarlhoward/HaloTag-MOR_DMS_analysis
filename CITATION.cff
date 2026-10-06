@@ -1,66 +1,78 @@
 cff-version: 1.2.0
 message: "If you use this software or data, please cite both the paper and the archived repository."
-title: "Code and data for: Pharmacological efficacy is an emergent property of a receptor-wide allosteric network"
+title: "Code and data for: Distinct activation mechanisms underlie ligand efficacy at a GPCR"
 abstract: >-
-  Code and input data reproducing every figure in a deep mutational
-  pharmacology study of the human mu-opioid receptor (OPRM1), in which
-  approximately 400,000 measurements of variant effects on signalling and
-  surface expression were collected across 15 opioid ligands, including
-  concentration-response scans for morphine, fentanyl and DAMGO.
+  Code and input data reproducing every figure in a deep mutational pharmacology
+  study of the human mu-opioid receptor (OPRM1), in which approximately 400,000
+  measurements of variant effects on signalling and surface expression were
+  collected across 15 opioid ligands, including concentration-response scans for
+  morphine, fentanyl and DAMGO.
 type: dataset
 license: MIT
-repository-code: "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS"
+repository-code: "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS_analysis"
 keywords:
   - deep mutational scanning
   - GPCR
   - mu-opioid receptor
   - OPRM1
   - allostery
-  - pharmacological efficacy
+  - ligand efficacy
   - opioids
 authors:
   - given-names: "Matthew K."
     family-names: Howard
-    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
+    affiliation: "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
   - given-names: "Eve J."
     family-names: Fine
-    affiliation: "Department of Bioengineering, Stanford University"
-  - given-names: Daniel
-    family-names: Richman
-    affiliation: "Department of Computer Science, Stanford University"
-  - given-names: Jerome
-    family-names: Freudenberg
-    affiliation: "Bioinformatics Interdepartmental Program, University of California Los Angeles"
-  - given-names: Karthik
+    affiliation: "Department of Bioengineering, Stanford University, Stanford, CA, USA"
+  - given-names: "Karthik"
     family-names: Srinivasan
-    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
-  - given-names: Jingyou
-    family-names: Rao
-    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
-  - given-names: Zara
+    affiliation: "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
+  - given-names: "Daniel D."
+    family-names: Richman
+    affiliation: "Department of Computer Science, Stanford University, Stanford, CA, USA"
+  - given-names: "Jerome"
+    family-names: Freudenberg
+    affiliation: "Bioinformatics Interdepartmental Program, UCLA, Los Angeles, CA, USA"
+  - given-names: "Zara"
     family-names: Weinberg
-    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
-  - given-names: Christian
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Jingyou"
+    family-names: Rao
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Ziyue"
+    family-names: Zou
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Christian"
     family-names: Macdonald
-    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
-  - given-names: Patrick
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Patrick"
     family-names: "Rockefeller Grimes"
-    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
-  - given-names: Mark
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Balazs R."
+    family-names: Varga
+    affiliation: "Center for Clinical Pharmacology, Department of Anesthesiology and Washington University Pain Center, Washington University School of Medicine, Saint Louis, MO, USA"
+  - given-names: "James S."
+    family-names: Fraser
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+  - given-names: "Mark"
     family-names: "Von Zastrow"
-    affiliation: "Department of Psychiatry and Behavioral Sciences, University of California San Francisco"
-  - given-names: Justin
-    family-names: English
-    affiliation: "Institute for Protein Design, University of Washington"
-  - given-names: Harold
+    affiliation: "Department of Psychiatry and Behavioral Sciences, University of California, San Francisco, CA, USA"
+  - given-names: "Susruta"
+    family-names: Majumdar
+    affiliation: "Center for Clinical Pharmacology, Department of Anesthesiology and Washington University Pain Center, Washington University School of Medicine, Saint Louis, MO, USA"
+  - given-names: "Harold"
     family-names: Pimentel
-    affiliation: "Department of Computational Medicine, University of California Los Angeles"
-  - given-names: Ron
+    affiliation: "Department of Computer Science, UCLA, Los Angeles, CA, USA"
+  - given-names: "Justin"
+    family-names: English
+    affiliation: "Department of Biochemistry, University of Utah School of Medicine, Salt Lake City, UT, USA"
+  - given-names: "Ron"
     family-names: Dror
-    affiliation: "Department of Computer Science, Stanford University"
-  - given-names: Aashish
+    affiliation: "Department of Computer Science, Stanford University, Stanford, CA, USA"
+  - given-names: "Aashish"
     family-names: Manglik
-    affiliation: "Department of Pharmaceutical Chemistry, University of California San Francisco"
-  - given-names: Willow
+    affiliation: "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
+  - given-names: "Willow"
     family-names: Coyote-Maestas
-    affiliation: "Department of Bioengineering and Therapeutic Science, University of California San Francisco"
+    affiliation: "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"

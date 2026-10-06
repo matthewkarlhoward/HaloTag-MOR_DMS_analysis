@@ -1,17 +1,25 @@
-# Pharmacological efficacy is an emergent property of a receptor-wide allosteric network
+# Distinct activation mechanisms underlie ligand efficacy at a GPCR
 
-<!-- Swap XXXXXXX for the Zenodo DOI once the record is published. See ZENODO.md -->
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22051140.svg)](https://doi.org/10.5281/zenodo.22051140)
 
-Code and input data for the figures in Howard *et al.*, *"Pharmacological efficacy is an
-emergent property of a receptor-wide allosteric network"* (μ-opioid receptor deep
-mutational pharmacology).
+Code and input data for every figure in:
+
+> **Distinct activation mechanisms underlie ligand efficacy at a GPCR**
+> Matthew K. Howard, Eve J. Fine, Karthik Srinivasan, Daniel D. Richman, Jerome
+> Freudenberg, Zara Weinberg, Jingyou Rao, Ziyue Zou, Christian Macdonald, Patrick
+> Rockefeller Grimes, Balazs R. Varga, James S. Fraser, Mark Von Zastrow, Susruta
+> Majumdar, Harold Pimentel, Justin English, Ron Dror, Aashish Manglik\*, Willow
+> Coyote-Maestas\*
+
+A deep mutational pharmacology study of the human μ-opioid receptor: roughly 400,000
+measurements of variant effects on signalling and surface expression across 15 opioid
+ligands, with full concentration-response scans for morphine, fentanyl and DAMGO.
 
 ## Layout
 
 ```
 data/            all input tables, per-bin variant counts, structures and pharmacology
-supplementary_table/  consolidated supplementary data workbook (8 sheets) + CSVs
+supplementary_table/  consolidated supplementary data workbook (9 sheets) + CSVs
 REPRODUCING.md   what can be regenerated, in what order, and what cannot
 MANIFEST.sha256  size + SHA-256 for every file under data/
 requirements.txt / r-requirements.txt   Python and R dependencies
@@ -22,25 +30,6 @@ figure_S01 .. S11/ one folder per supplemental figure
    code/         the scripts that draw the panels
    panels/       the rendered panel PDFs as they went into the figure
    README.md     panel-by-panel map of script -> input data -> output
-```
-
-## How the data flow
-
-```
-FASTQ  --(Dumpling / GATK AnalyzeSaturationMutagenesis)-->  per-variant counts
-                                                    -> data/variant_counts/  (532 files)
-counts --(Lilace)-->  per-condition variant scores
-                        dose-response (morphine / fentanyl / DAMGO)
-                        15-ligand saturating-concentration panel
-                        surface expression
-       --(shared/create_composite_scores.py)--> data/dms_scores/composite_dms_scores.csv
-                        |
-                        +-- shared/refit_3param_robust*.py  -> data/curve_fits/         (Hill Emin/EC50/Emax)
-                        +-- shared/01_fit_operational.py    -> data/operational_model/  (Black-Leff tau/rho)
-                        +-- shared/pca_analysis.py          -> data/pca/                (position + variant PCA)
-                        +-- shared/compute_lof_gof.R        -> data/dms_scores/lof_gof_scores.csv
-                        |
-                        +-- figure_*/code/*                 -> panels
 ```
 
 `data/dms_scores/composite_dms_scores.csv` (10,178 variants x 211 columns) is the master

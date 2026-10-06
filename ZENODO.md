@@ -46,7 +46,7 @@ Well under Zenodo's 50 GB per-record limit.
    better fit given `data/` and the supplementary workbook dominate. *Software* is
    defensible if you would rather emphasise the code.
 4. Find the DOI field and choose **"Reserve DOI"** (sometimes shown as *Get a DOI now!*).
-   This is the step that matters — it hands you `10.5281/zenodo.XXXXXXX` immediately,
+   This is the step that matters — it hands you `10.5281/zenodo.22051140` immediately,
    without publishing anything.
 5. Set **Access** to **Restricted**, and leave the record as a **saved draft**. Do not
    press Publish yet.
@@ -62,12 +62,12 @@ The values are there to copy from. Summary:
 
 | Field | Value |
 |---|---|
-| Title | Code and data for: Pharmacological efficacy is an emergent property of a receptor-wide allosteric network |
+| Title | Code and data for: Distinct activation mechanisms underlie ligand efficacy at a GPCR |
 | Upload type | Dataset |
 | License | MIT (code) — note the CC BY 4.0 data split in the description |
 | Authors | the 15 authors, in paper order, from `CITATION.cff` |
 | Keywords | deep mutational scanning; GPCR; mu-opioid receptor; OPRM1; allostery; pharmacological efficacy; opioids |
-| Related identifier | `https://github.com/matthewkarlhoward/HaloTag-MOR_DMS` — relation *is supplement to* |
+| Related identifier | `https://github.com/matthewkarlhoward/HaloTag-MOR_DMS_analysis` — relation *is supplement to* |
 
 Once the preprint has its own DOI, add it as a second related identifier with relation
 *is supplement to*.
@@ -77,8 +77,8 @@ Once the preprint has its own DOI, add it as a second related identifier with re
 Two separate links, since Zenodo is not tracking GitHub:
 
 ```
-Code and data are archived at Zenodo (DOI: 10.5281/zenodo.XXXXXXX) and are also
-available at https://github.com/matthewkarlhoward/HaloTag-MOR_DMS.
+Code and data are archived at Zenodo (DOI: 10.5281/zenodo.22051140) and are also
+available at https://github.com/matthewkarlhoward/HaloTag-MOR_DMS_analysis.
 ```
 
 **The reserved DOI does not resolve until you publish the record.** Anyone clicking it
@@ -96,7 +96,7 @@ preprint goes live.
 4. Add the DOI badge to `README.md` (placeholder already in place — swap the number in
    both spots):
    ```markdown
-   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.XXXXXXX.svg)](https://doi.org/10.5281/zenodo.XXXXXXX)
+   [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22051140.svg)](https://doi.org/10.5281/zenodo.22051140)
    ```
 
 Direction matters: opening a restricted record is something you can do yourself;

@@ -1,5 +1,5 @@
 {
-  "title": "Code and data for: Pharmacological efficacy is an emergent property of a receptor-wide allosteric network",
+  "title": "Code and data for: Distinct activation mechanisms underlie ligand efficacy at a GPCR",
   "description": "Code and input data reproducing every figure in a deep mutational pharmacology study of the human mu-opioid receptor (OPRM1). Approximately 400,000 measurements of variant effects on signalling and surface expression were collected across 15 opioid ligands spanning the efficacy spectrum, including full concentration-response mutational scans for morphine, fentanyl and DAMGO. The repository contains one folder per main and supplemental figure (scripts, rendered panels and a panel-by-panel README), all input tables and structures under data/, the shared upstream pipeline, and a consolidated eight-sheet supplementary data workbook.",
   "upload_type": "dataset",
   "license": "mit",
@@ -7,63 +7,79 @@
   "creators": [
     {
       "name": "Howard, Matthew K.",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
     },
     {
       "name": "Fine, Eve J.",
-      "affiliation": "Stanford University"
-    },
-    {
-      "name": "Richman, Daniel",
-      "affiliation": "Stanford University"
-    },
-    {
-      "name": "Freudenberg, Jerome",
-      "affiliation": "University of California Los Angeles"
+      "affiliation": "Department of Bioengineering, Stanford University, Stanford, CA, USA"
     },
     {
       "name": "Srinivasan, Karthik",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
     },
     {
-      "name": "Rao, Jingyou",
-      "affiliation": "University of California San Francisco"
+      "name": "Richman, Daniel D.",
+      "affiliation": "Department of Computer Science, Stanford University, Stanford, CA, USA"
+    },
+    {
+      "name": "Freudenberg, Jerome",
+      "affiliation": "Bioinformatics Interdepartmental Program, UCLA, Los Angeles, CA, USA"
     },
     {
       "name": "Weinberg, Zara",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+    },
+    {
+      "name": "Rao, Jingyou",
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+    },
+    {
+      "name": "Zou, Ziyue",
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
     },
     {
       "name": "Macdonald, Christian",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
     },
     {
       "name": "Rockefeller Grimes, Patrick",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
+    },
+    {
+      "name": "Varga, Balazs R.",
+      "affiliation": "Center for Clinical Pharmacology, Department of Anesthesiology and Washington University Pain Center, Washington University School of Medicine, Saint Louis, MO, USA"
+    },
+    {
+      "name": "Fraser, James S.",
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
     },
     {
       "name": "Von Zastrow, Mark",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Psychiatry and Behavioral Sciences, University of California, San Francisco, CA, USA"
     },
     {
-      "name": "English, Justin",
-      "affiliation": "University of Washington"
+      "name": "Majumdar, Susruta",
+      "affiliation": "Center for Clinical Pharmacology, Department of Anesthesiology and Washington University Pain Center, Washington University School of Medicine, Saint Louis, MO, USA"
     },
     {
       "name": "Pimentel, Harold",
-      "affiliation": "University of California Los Angeles"
+      "affiliation": "Department of Computer Science, UCLA, Los Angeles, CA, USA"
+    },
+    {
+      "name": "English, Justin",
+      "affiliation": "Department of Biochemistry, University of Utah School of Medicine, Salt Lake City, UT, USA"
     },
     {
       "name": "Dror, Ron",
-      "affiliation": "Stanford University"
+      "affiliation": "Department of Computer Science, Stanford University, Stanford, CA, USA"
     },
     {
       "name": "Manglik, Aashish",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Pharmaceutical Chemistry, UCSF, San Francisco, CA, USA"
     },
     {
       "name": "Coyote-Maestas, Willow",
-      "affiliation": "University of California San Francisco"
+      "affiliation": "Department of Bioengineering and Therapeutic Science, UCSF, San Francisco, CA, USA"
     }
   ],
   "keywords": [
@@ -72,15 +88,16 @@
     "mu-opioid receptor",
     "OPRM1",
     "allostery",
-    "pharmacological efficacy",
+    "ligand efficacy",
     "opioids",
     "protein engineering"
   ],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS",
+      "identifier": "https://github.com/matthewkarlhoward/HaloTag-MOR_DMS_analysis",
       "relation": "isSupplementTo",
       "scheme": "url"
     }
-  ]
+  ],
+  "doi": "10.5281/zenodo.22051140"
 }
