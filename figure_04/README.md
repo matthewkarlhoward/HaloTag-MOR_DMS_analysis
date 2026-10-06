@@ -6,7 +6,7 @@
 
 | Script | Original path | Reads | Writes |
 |---|---|---|---|
-| `code/variant_morphine_vs_fentanyl_ec50_q126.py` | `curve_refitting/` | `data/curve_fits/refit_3param_robust_{morphine,fentanyl}.csv` | `panels/variant_morphine_vs_fentanyl_ec50_q126.pdf` |
+| `code/variant_morphine_vs_fentanyl_ec50_q126.py` | `curve_refitting/` | `data/curve_fits/refit_3param_robust_{morphine,fentanyl}.csv` | `panels/variant_morphine_vs_fentanyl_ec50_q126_alpha_reddeep.pdf` |
 
 **c** EC50 LOF-bias mapped on 8EF5 / 8EF6.
 
@@ -19,7 +19,7 @@
 
 | Script | Original path | Reads | Writes |
 |---|---|---|---|
-| `code/variant_morphine_vs_fentanyl_emax.py` | `curve_refitting/` | `data/curve_fits/refit_3param_robust_{morphine,fentanyl}.csv` | `panels/variant_morphine_vs_fentanyl_emax.pdf` |
+| `code/variant_morphine_vs_fentanyl_emax.py` | `curve_refitting/` | `data/curve_fits/refit_3param_robust_{morphine,fentanyl}.csv` | `panels/variant_morphine_vs_fentanyl_emax_alpha.pdf` |
 
 **e** Residuals from the least-squares regression of position-average morphine on fentanyl
 Emax; positive (blue) = larger effect on morphine, negative (red) = larger effect on
@@ -42,3 +42,11 @@ same quantity.
 ligand's potency or efficacy relative to that ligand's own synonymous distribution; the
 LOF bias is the difference in that quantity between the two ligands. Positions where
 mutations preferentially weaken one ligand carry the largest scores.
+
+## Scatter styling
+
+Both scatters are drawn through `code/density_scatter.py`, which offers three styles via
+`SCATTER_STYLE`: `alpha` (black points at low opacity, the published style), `grey` (KDE
+density on a grey ramp) and `magma` (the original density colouring). The deposited panels
+are the `alpha` renders. The Q126 highlight in **b** is `#B2182B`, the deeper red from the
+bias scale in **c** and **f**, passed as `argv[1]`; the filename suffix is `argv[2]`.

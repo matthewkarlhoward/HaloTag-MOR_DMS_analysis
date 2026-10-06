@@ -23,7 +23,15 @@ membership from **b**.
 
 | Script | Original path | Reads | Writes |
 |---|---|---|---|
-| `code/trupath_emax_bar.py` | `trupath_vs_camp_efficacy/` | `data/pharmacology/20260117_mor_wt_trupath_compilation.pzfx` | `panels/trupath_emax_bar.pdf` |
+| `code/trupath_emax_bar_40mm.py` | `trupath_vs_camp_efficacy/` | `data/pharmacology/20260117_mor_wt_trupath_compilation.pzfx` | `panels/trupath_emax_bar_40mm.pdf` — the published panel, exactly 40 x 40 mm |
+
+The 14 ligands with full concentration-responses come from the Prism `Data 4` tab.
+**SR-17018 is the fifteenth and is not from that plate**: its solubility was poor, so it is
+a single 100 µM measurement, 98.5 ± 19.3 % of DAMGO, from the 20260502 run (rows E/J/O,
+own vehicle wells). `code/trupath_emax_bar_points.py` derives that value from
+`data/pharmacology/sr17018/sr17018_trupath_wells.csv`; `trupath_emax_bar_40mm.py` carries
+it as a constant. See `data/pharmacology/sr17018/README.md` for the caveats and for the
+alternative 20260117 analysis, which gives 42.4 %.
 
 **d, e, f** All three panels come from a single **variant-level** PCA fit (PC1 49.1%,
 PC2 10.2%), so the percentages are consistent across the row.
