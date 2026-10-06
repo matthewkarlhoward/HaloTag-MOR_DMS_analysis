@@ -5,7 +5,7 @@ Tests whether the PCA's PC2 axis tracks measured G-protein efficacy.
 
 TruPath efficacy source: trupath_vs_camp_efficacy/WT_cAMP_vs_TRUPATH_All_Drugs.xlsx.
 NOTE: that file's headers are SWAPPED (see camp_vs_trupath_combined.R) — the column
-labeled 'cAMP Response' is actually TruPath Gi1 Emax (% DAMGO). We use that column.
+column TRUPATH_Gi1_Emax_pct_DAMGO.
 
 13 drugs (Naltrexone & SR17018 have no TruPath value).
 Output: plots/pca/pca_pc2_vs_trupath_efficacy.pdf
@@ -48,8 +48,8 @@ load["key"] = load["drug"].str.lower()
 eff = pd.read_excel(
     ROOT / "trupath_vs_camp_efficacy/WT_cAMP_vs_TRUPATH_All_Drugs.xlsx",
     sheet_name="cAMP vs TRUPATH (WT)")
-# Undo the swapped headers: 'cAMP Response' is really TruPath Gi1 Emax (% DAMGO)
-eff = eff.rename(columns={"cAMP Response": "trupath_emax"})
+
+eff = eff.rename(columns={"TRUPATH_Gi1_Emax_pct_DAMGO": "trupath_emax"})
 eff["key"] = eff["Ligand"].str.lower()
 
 df = load.merge(eff[["key", "trupath_emax"]], on="key").dropna(

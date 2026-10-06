@@ -4,12 +4,12 @@ library(readxl)
 setwd("/Users/mkh/GitHub/mor_dms_analysis/trupath_vs_camp_efficacy")
 
 # Headers in the source spreadsheet are flipped:
-#   "cAMP Response" column is actually TRUPATH Gi1 (already % DAMGO).
-#   "TRUPATH (Gi1)" column is actually raw cAMP BRET ΔEmax that needs normalising.
+#   TRUPATH_Gi1_Emax_pct_DAMGO is already normalised to DAMGO.
+#   cAMP_response_raw is the raw cAMP BRET deltaEmax and needs normalising.
 dat <- read_excel("WT_cAMP_vs_TRUPATH_All_Drugs.xlsx",
                   sheet = "cAMP vs TRUPATH (WT)") %>%
-  rename(trupath_pct = `cAMP Response`,
-         camp_raw    = `TRUPATH (Gi1)`) %>%
+  rename(trupath_pct = `TRUPATH_Gi1_Emax_pct_DAMGO`,
+         camp_raw    = `cAMP_response_raw`) %>%
   filter(!is.na(trupath_pct), !is.na(camp_raw))
 
 # Normalise cAMP BRET ΔEmax to % DAMGO (DAMGO = 100)

@@ -69,7 +69,7 @@ ldC = ld.reset_index().rename(columns={"index": "drug"})
 ldC["class"] = ldC.drug.map(cls); ldC["key"] = ldC.drug.str.lower()
 eff = pd.read_excel(
     ROOT / "trupath_vs_camp_efficacy/WT_cAMP_vs_TRUPATH_All_Drugs.xlsx",
-    sheet_name="cAMP vs TRUPATH (WT)").rename(columns={"cAMP Response": "emax"})
+    sheet_name="cAMP vs TRUPATH (WT)").rename(columns={"TRUPATH_Gi1_Emax_pct_DAMGO": "emax"})
 eff["key"] = eff.Ligand.str.lower()
 dC = ldC.merge(eff[["key", "emax"]], on="key").dropna(subset=["PC2", "emax"])
 xC, yC = dC.emax.to_numpy(), dC.PC2.to_numpy()

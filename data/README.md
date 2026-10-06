@@ -72,7 +72,7 @@ AlphaMissense, MTR and gnomAD tables. Original: `annotations/`.
 |---|---|
 | `transcriptional_drc.xlsx` | Raw pooled-cAMP transcriptional reporter dose-responses, wild-type μOR, all ligands. |
 | `20260117_mor_wt_trupath_compilation.pzfx` | Prism project with the wild-type TRUPATH Gi1 BRET dose-responses. |
-| `WT_cAMP_vs_TRUPATH_All_Drugs.xlsx` | Per-ligand Emax/EC50 summary for both assays. **Note:** in the `cAMP vs TRUPATH (WT)` sheet the two Emax headers are swapped — the column labelled `cAMP Response` holds the TRUPATH Gi1 Emax. |
+| `WT_cAMP_vs_TRUPATH_All_Drugs.xlsx` | Per-ligand summary for both assays: `TRUPATH_Gi1_Emax_pct_DAMGO` is already normalised to DAMGO; `cAMP_response_raw` is the raw cAMP span and becomes the published cAMP Emax when divided by DAMGO's. |
 | `camp_trupath_scatter_values.csv` | Derived table behind figure 1c (`compute_scatter_values.py`). |
 | `param_table.csv` | Derived table behind supplemental figure 1d. |
 | `doubles/doubles{1,2}.xlsx` | Prism fit tables for the two double-mutant BRET runs. |
