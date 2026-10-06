@@ -38,13 +38,7 @@ ligands falls more than `LOF_THRESHOLD = -0.05` below the synonymous mean, leavi
 Structures with no resolved Gα are excluded: 4DKL, 5C1M, 7UL4, 8E0G, 8QOT, 9MQI, 9PXU,
 9BJK, 9WSV, 9WSX.
 
-Recomputed from the deposited data; reproduces the panel's 30 rows exactly. Note the two
-distinct thresholds: `LOF_THRESHOLD = -0.05` on the mean effect selects *which positions
-appear*, while `LOF_SD = 2` (per ligand) defines the *cell values*. No surface-expression
-filter is applied here, unlike the figure 8 network analysis. The G-protein contact class shown along the y-axis is Active / Intermediate /
-Both / NA, derived from which state's first shell a position appears in.
-
-| Script | Original path | Writes |
+Recomputed from the deposited data; reproduces the panel's 30 rows exactly. | Script | Original path | Writes |
 |---|---|---|
 | `code/analyze_gpcr_gprotein_distances.py` | `structures/scripts/gprotein/` | `data/structures/processed/gprotein_distances/` |
 

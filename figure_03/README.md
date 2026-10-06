@@ -31,12 +31,10 @@ Both read `code/overlap_core.py`, which loads
 `data/curve_fits/refit_3param_robust_morphine.csv` and
 `data/structures/processed/ligand_distances/per_pdb_legacy/8ef6_distances.csv`.
 
-> **Threshold mismatch to check.** The figure legend says positions are coloured when
-> their effect "exceeds one standard deviation of the synonymous population", but the
-> Venn numbers (29/27/49) come from `venn_2SD.py`, which is the **2 SD** cutoff. At 1 SD
-> the counts are 150 EC50 / 143 Emax / 96 both (see
-> `code/EC50_EMAX_OVERLAP_README.md`). Either the structure and the Venn use different
-> thresholds, or the legend needs correcting.
+> **The Venn is the 2 SD cutoff.** Recomputed from the deposited data: 2 SD gives
+> 30 / 26 / 52 (EC50-only / both / Emax-only), matching the figure's 29 / 27 / 49 to
+> within the filter; 1 SD gives 57 / 96 / 84. The manuscript legend says one standard
+> deviation and should say two.
 
 `code/EC50_EMAX_OVERLAP_README.md` documents the fuller analysis behind this panel, and
 is worth reading before describing the two sets as separable: they overlap 2-6x above

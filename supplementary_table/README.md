@@ -1,7 +1,7 @@
 # Consolidated supplementary data table
 
-`MOR_DMS_supplementary_data.xlsx` — one workbook, nine sheets plus a `00_README`
-index. `csv/` holds the same nine sheets as flat CSVs for programmatic use.
+`MOR_DMS_supplementary_data.xlsx` — one workbook, seven sheets plus a `00_README`
+index. `csv/` holds the same seven sheets as flat CSVs for programmatic use.
 Rebuild with `python3 build_supplementary_table.py` (reads only from `../data/`).
 
 | Sheet | Grain | Rows × cols |
@@ -12,9 +12,7 @@ Rebuild with `python3 build_supplementary_table.py` (reads only from `../data/`)
 | `04_position_lof_gof` | position × ligand | 5,985 × 8 |
 | `05_ligand_summary` | ligand | 15 × 20 |
 | `06_ligand_contacts` | position × ligand | 4,517 × 6 |
-| `07_validation_pharmacology` | variant × ligand (fitted) | 109 × 20 |
-| `08_screen_samples` | sorted bin | 532 × 12 |
-| `09_validation_trupath_points` | individual replicate point | 6,335 × 11 |
+| `07_screen_samples` | sorted bin | 532 × 12 |
 
 Grains are deliberately separate. Variants, positions, ligands and sorted samples are
 different units of observation; flattening them into one file would either duplicate
@@ -73,7 +71,6 @@ concentration despite the column name).
 | `Morphine_op_log10_rho` | Expression-corrected per-receptor coupling, log10, WT = 0 |
 | `..._op_saturating`, `_op_KA_unidentified` | Flags: the curve saturated, so K_A is not identifiable |
 | `PCA_variant_PC1..3` | Variant-level PCA scores (PC1 49.1%, PC2 10.2% of variance) |
-| `alphamissense_score`, `alphamissense_class`, `MTR` | External constraint annotation, not generated here |
 
 Only morphine carries `log10_rho`; fentanyl and DAMGO were fit with the operational model
 for concordance only (supplemental figure 5), without the expression decomposition.
@@ -127,63 +124,12 @@ shell and **side-chain atoms within 4.5 Å** of a first-shell residue's side cha
 ligand has several structures the closest approach is kept. This matches the definition
 given in the manuscript Methods.
 
-## 07_validation_pharmacology
-
-Fitted parameters for **all** low-throughput TRUPATH Gi1 BRET in the paper: the
-single-mutant series behind figure 7d–f and the A119L double-mutant series behind
-figures 8d/f/g and supplemental figure 11a. 109 curves over the four ligands and twenty
-variants that appear in those figures.
-The individual points behind every one of these fits are in sheet `09`.
-
-`pipeline` says which analysis produced the row, and this matters because **the two
-pipelines normalise differently**:
-
-| `pipeline` | Normalisation | Figures |
-|---|---|---|
-| `singles` | each curve divided by its own fitted no-drug plateau | 7d–f |
-| `doubles` | the two runs co-scaled on their shared WT and A119L arms, not renormalised to DAMGO | 8d, 8f, 8g, S11a |
-
-`activation_window` = −Span, the depth of the signal-down curve.
-`pct_activation_vs_WT_DAMGO` is computed **within each source**, against that source's own
-WT + DAMGO window, so values are comparable inside a pipeline but should not be compared
-across pipelines without care. `responsive` is the extra-sum-of-squares F test against a
-flat line; where it is False the window is reported as 0 for the doubles. A small negative
-percentage means a significant but upward, non-activating curve, not negative efficacy.
-
-> **Scope.** Both sheets are restricted to what the paper plots: DAMGO, PZM21 and
-> nalbuphine (figure 7d–f) plus naloxone (figures 8d/f/g, S11a). The singles pipeline
-> also measured buprenorphine, butorphanol, fentanyl, MP and morphine against these
-> variants, and two further substitutions (I280D, I280P), none of which appear in any
-> figure; those are not deposited.
-
-> **One raw run appears twice, under both normalisations.** The 20260427 experiment is
-> `source = doubles_raw` in the singles pipeline and part of `doubles1+doubles2` in the
-> doubles pipeline. These are the same wells analysed two ways, not independent
-> measurements. Filter on `pipeline` before aggregating.
-
-## 08_screen_samples
+## 07_screen_samples
 
 Per-sorted-bin metadata for every DMS screen: assay, date, replicate, ligand and
 concentration, bin, and mean/median sequencing coverage. Supports supplemental figures
 2h–i and documents which raw count file each bin corresponds to.
 
-## 09_validation_trupath_points
-
-Every individual replicate point behind sheet `07`, one row per
-pipeline × source × ligand × variant × concentration × replicate. 6,335 points.
-
-| Column | Meaning |
-|---|---|
-| `pipeline`, `source`, `run` | Which analysis and which experimental run |
-| `ligand`, `variant`, `is_double` | What was measured |
-| `log10_conc_M`, `replicate` | Dose and biological replicate |
-| `raw_bret` | Unnormalised BRET ratio (515/410). **Singles only** |
-| `normalized` | The value plotted. Singles: raw ÷ `divisor`. Doubles: the co-scaled response extracted from Prism |
-| `divisor` | The fitted no-drug plateau used to normalise that curve. Singles only |
-
-`raw_bret` and `divisor` are empty for the doubles because those points were extracted
-from the Prism projects after normalisation; the unnormalised values are not recoverable
-from the deposited files.
 
 ---
 

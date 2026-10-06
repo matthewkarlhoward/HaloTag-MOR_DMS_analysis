@@ -11,12 +11,9 @@ ligand dendrogram on the right.
 | `code/dms_heatmap_stacked_magma_colorbar.py` | `plots/heatmaps/` | same | `panels/dms_heatmap_stacked_magma_colorbar_h.pdf` |
 
 Clustering: **1 − Pearson** distance with **ward.D2** linkage on each ligand's
-per-position mean missense effect, positions 65–355. Correlation distance clusters by
-profile *shape* rather than effect magnitude; plain Euclidean distance produced a
-magnitude artefact that stranded DAMGO with TRV130/carfentanil. The tree is rotated
-toward an efficacy ladder and DAMGO pinned to the bottom row. Antagonist, weak partial
-and efficacious-agonist groups resolve cleanly; the intermediate-vs-strong agonist split
-is not a distinct fingerprint.
+per-position mean missense effect, positions 65–355, so ligands group by profile shape
+rather than effect magnitude. The tree is rotated toward an efficacy ladder and DAMGO
+pinned to the bottom row.
 
 **c** TRUPATH Gi1 Emax per ligand, normalised to DAMGO, bars coloured by the cluster
 membership from **b**.
