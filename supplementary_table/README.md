@@ -12,9 +12,9 @@ Rebuild with `python3 build_supplementary_table.py` (reads only from `../data/`)
 | `04_position_lof_gof` | position × ligand | 5,985 × 8 |
 | `05_ligand_summary` | ligand | 15 × 20 |
 | `06_ligand_contacts` | position × ligand | 4,517 × 6 |
-| `07_validation_pharmacology` | variant × ligand (fitted) | 148 × 20 |
+| `07_validation_pharmacology` | variant × ligand (fitted) | 109 × 20 |
 | `08_screen_samples` | sorted bin | 532 × 12 |
-| `09_validation_trupath_points` | individual replicate point | 8,879 × 11 |
+| `09_validation_trupath_points` | individual replicate point | 6,335 × 11 |
 
 Grains are deliberately separate. Variants, positions, ligands and sorted samples are
 different units of observation; flattening them into one file would either duplicate
@@ -131,7 +131,8 @@ given in the manuscript Methods.
 
 Fitted parameters for **all** low-throughput TRUPATH Gi1 BRET in the paper: the
 single-mutant series behind figure 7d–f and the A119L double-mutant series behind
-figures 8d/f/g and supplemental figure 11a. 148 curves over 9 ligands and 22 variants.
+figures 8d/f/g and supplemental figure 11a. 109 curves over the four ligands and twenty
+variants that appear in those figures.
 The individual points behind every one of these fits are in sheet `09`.
 
 `pipeline` says which analysis produced the row, and this matters because **the two
@@ -149,6 +150,12 @@ across pipelines without care. `responsive` is the extra-sum-of-squares F test a
 flat line; where it is False the window is reported as 0 for the doubles. A small negative
 percentage means a significant but upward, non-activating curve, not negative efficacy.
 
+> **Scope.** Both sheets are restricted to what the paper plots: DAMGO, PZM21 and
+> nalbuphine (figure 7d–f) plus naloxone (figures 8d/f/g, S11a). The singles pipeline
+> also measured buprenorphine, butorphanol, fentanyl, MP and morphine against these
+> variants, and two further substitutions (I280D, I280P), none of which appear in any
+> figure; those are not deposited.
+
 > **One raw run appears twice, under both normalisations.** The 20260427 experiment is
 > `source = doubles_raw` in the singles pipeline and part of `doubles1+doubles2` in the
 > doubles pipeline. These are the same wells analysed two ways, not independent
@@ -163,7 +170,7 @@ concentration, bin, and mean/median sequencing coverage. Supports supplemental f
 ## 09_validation_trupath_points
 
 Every individual replicate point behind sheet `07`, one row per
-pipeline × source × ligand × variant × concentration × replicate. 8,879 points.
+pipeline × source × ligand × variant × concentration × replicate. 6,335 points.
 
 | Column | Meaning |
 |---|---|

@@ -424,6 +424,15 @@ vpts = pd.concat([s_long, d_long], ignore_index=True)
 vpts = vpts.sort_values(["pipeline", "source", "ligand", "variant",
                          "log10_conc_M", "replicate"]).reset_index(drop=True)
 
+# Restrict to what the paper actually plots: figure 7d-f (DAMGO / PZM21 /
+# nalbuphine) and figures 8d,f,g + S11a (those three plus naloxone). The singles
+# pipeline also measured five further ligands and two further I280 substitutions
+# that appear in no figure; those are dropped here.
+PUB_LIGANDS = {"DAMGO", "PZM21", "Nalbuphine", "Naloxone"}
+PUB_DROP_VARIANTS = {"I280D", "I280P"}
+val = val[val.ligand.isin(PUB_LIGANDS) & ~val.variant.isin(PUB_DROP_VARIANTS)].reset_index(drop=True)
+vpts = vpts[vpts.ligand.isin(PUB_LIGANDS) & ~vpts.variant.isin(PUB_DROP_VARIANTS)].reset_index(drop=True)
+
 # ---------------------------------------------------------------------------
 # Sheet 08 — screen sample metadata
 # ---------------------------------------------------------------------------
