@@ -327,9 +327,9 @@ con = (con.sort_values(["ligand", "position", "min_distance_angstrom"])
           .sort_values(["position", "ligand"]).reset_index(drop=True))
 
 # ---------------------------------------------------------------------------
-# Sheet 07 — validation pharmacology (double-mutant BRET)
+# Sheet 07 — validation pharmacology: fitted parameters (singles + doubles)
 # ---------------------------------------------------------------------------
-log("sheet 07: validation pharmacology ...")
+log("sheet 07: validation pharmacology (fitted) ...")
 sys.path.insert(0, str(HERE))
 try:
     from drc_fit import fit_drc
@@ -337,15 +337,15 @@ except ImportError:
     sys.path.insert(0, str(HERE.parent / "figure_08" / "code"))
     from drc_fit import fit_drc
 
+# --- doubles: fit here, as plotted in figures 8d/f/g and S11a ---------------
 pts = pd.read_csv(DATA / "pharmacology/doubles/doubles_merged_points.csv")
 
 
-def per_rep_window_sem(g):
-    """SEM of the activation window across replicates, as drawn in figure 8f."""
+def per_rep_window_sem(g, keys, xcol, ycol):
     per = []
-    for _, r in g.groupby(["experiment", "rep"]):
-        m = r.groupby("logM")["response"].mean().reset_index()
-        f = fit_drc(m.logM.values, m.response.values)
+    for _, r in g.groupby(keys):
+        m = r.groupby(xcol)[ycol].mean().reset_index()
+        f = fit_drc(m[xcol].values, m[ycol].values)
         if f["ok"] and np.isfinite(f["span"]):
             per.append(-f["span"])
     return float(np.std(per, ddof=1) / np.sqrt(len(per))) if len(per) > 1 else np.nan
@@ -355,26 +355,74 @@ rows = []
 for (lig, var), g in pts.groupby(["ligand", "variant"]):
     m = g.groupby("logM")["response"].mean().reset_index()
     r = fit_drc(m.logM.values, m.response.values)
-    label = var.replace(f"{lig}_", "")
     rows.append(dict(
-        ligand=lig, variant=label,
-        is_double=bool(g.is_double.iloc[0]),
-        partner=g.partner.iloc[0],
-        n_replicates=int(g.groupby(['experiment','rep']).ngroups),
+        pipeline="doubles", figure="8d, 8f, 8g, S11a",
+        source="doubles1+doubles2", run="20260421+20260427",
+        ligand=lig, variant=var.replace(f"{lig}_", ""),
+        is_double=bool(g.is_double.iloc[0]), partner=g.partner.iloc[0],
+        n_replicates=int(g.groupby(["experiment", "rep"]).ngroups),
         n_concentrations=int(g.logM.nunique()),
         logEC50_M=r["params"][2] if r["params"] is not None else np.nan,
-        span=r["span"], span_used=r["span_used"],
         activation_window=-r["span_used"],
-        activation_window_sem=per_rep_window_sem(g),
-        responsive=r["responsive"], f_test_p=r["pval"], r2=r["r2"]))
-val = pd.DataFrame(rows)
-# % activation relative to the WT + DAMGO window, as plotted in figures 8e-f
-wt_damgo = val.loc[(val.ligand == "DAMGO") & (val.variant == "WT"),
-                   "activation_window"].iloc[0]
-val["pct_activation_vs_WT_DAMGO"] = val["activation_window"] / wt_damgo * 100
-val["pct_activation_sem"] = val["activation_window_sem"] / wt_damgo * 100
+        activation_window_sem=per_rep_window_sem(g, ["experiment", "rep"], "logM", "response"),
+        responsive=r["responsive"], f_test_p=r["pval"], r2=r["r2"],
+        normalization="two runs co-scaled on shared WT/A119L arms; not renormalised to DAMGO"))
+dbl = pd.DataFrame(rows)
+wt_damgo = dbl.loc[(dbl.ligand == "DAMGO") & (dbl.variant == "WT"), "activation_window"].iloc[0]
+dbl["pct_activation_vs_WT_DAMGO"] = dbl.activation_window / wt_damgo * 100
+dbl["pct_activation_sem"] = dbl.activation_window_sem / wt_damgo * 100
+
+# --- singles: parameters as fitted by the singles pipeline ------------------
+sp = pd.read_csv(DATA / "pharmacology/singles/singles_norm_params.csv")
+spts = pd.read_csv(DATA / "pharmacology/singles/singles_norm_points.csv")
+FIGMAP = {"ICL": "7d, 7e", "R278_run1": "7f", "doubles_raw": "7d-f (same raw run as doubles1)"}
+sing = pd.DataFrame(dict(
+    pipeline="singles", figure=sp.source.map(FIGMAP).fillna("7d-f"),
+    source=sp.source, run=sp.run.astype(str),
+    ligand=sp.ligand, variant=sp.variant,
+    is_double=sp.variant.str.contains("_"), partner=np.nan,
+    n_replicates=sp.n_rep, n_concentrations=sp.n_dose,
+    logEC50_M=sp.logec50, activation_window=sp.window,
+    activation_window_sem=np.nan,
+    responsive=sp.responsive, f_test_p=sp.pval, r2=sp.r2,
+    normalization="each curve divided by its own fitted no-drug plateau"))
+# percent is taken within each source, against that source's own WT + DAMGO
+ref = (sp[(sp.variant == "WT") & (sp.ligand == "DAMGO")]
+       .set_index("source")["window"].to_dict())
+sing["pct_activation_vs_WT_DAMGO"] = [
+    w / ref[s] * 100 if s in ref else np.nan for w, s in zip(sing.activation_window, sing.source)]
+sing["pct_activation_sem"] = np.nan
+
+COLS = ["pipeline", "figure", "source", "run", "ligand", "variant", "is_double", "partner",
+        "n_replicates", "n_concentrations", "logEC50_M", "activation_window",
+        "activation_window_sem", "pct_activation_vs_WT_DAMGO", "pct_activation_sem",
+        "responsive", "f_test_p", "r2", "normalization"]
+val = pd.concat([sing[COLS], dbl[COLS]], ignore_index=True)
 val["assay"] = "TRUPATH Gi1 BRET"
-val = val.sort_values(["ligand", "is_double", "variant"]).reset_index(drop=True)
+val = val.sort_values(["pipeline", "source", "ligand", "is_double", "variant"]).reset_index(drop=True)
+
+# ---------------------------------------------------------------------------
+# Sheet 09 — validation pharmacology: individual replicate points
+# ---------------------------------------------------------------------------
+log("sheet 09: validation points ...")
+sraw = pd.read_csv(DATA / "pharmacology/singles/singles_raw_points.csv")
+s_pts = spts.merge(sraw[["source", "run", "ligand", "variant", "logM", "rep", "bret"]],
+                   on=["source", "run", "ligand", "variant", "logM", "rep", "bret"], how="left")
+s_long = pd.DataFrame(dict(
+    pipeline="singles", source=s_pts.source, run=s_pts.run.astype(str),
+    ligand=s_pts.ligand, variant=s_pts.variant,
+    is_double=s_pts.variant.str.contains("_"),
+    log10_conc_M=s_pts.logM, replicate=s_pts.rep,
+    raw_bret=s_pts.bret, normalized=s_pts.norm, divisor=s_pts.divisor))
+d_long = pd.DataFrame(dict(
+    pipeline="doubles", source=pts.set, run=pts.experiment.astype(str),
+    ligand=pts.ligand, variant=[v.replace(f"{l}_", "") for v, l in zip(pts.variant, pts.ligand)],
+    is_double=pts.is_double,
+    log10_conc_M=pts.logM, replicate=pts.rep,
+    raw_bret=np.nan, normalized=pts.response, divisor=np.nan))
+vpts = pd.concat([s_long, d_long], ignore_index=True)
+vpts = vpts.sort_values(["pipeline", "source", "ligand", "variant",
+                         "log10_conc_M", "replicate"]).reset_index(drop=True)
 
 # ---------------------------------------------------------------------------
 # Sheet 08 — screen sample metadata
@@ -401,6 +449,7 @@ SHEETS = [
     ("06_ligand_contacts", con),
     ("07_validation_pharmacology", val),
     ("08_screen_samples", samp),
+    ("09_validation_trupath_points", vpts),
 ]
 
 for name, df in SHEETS:

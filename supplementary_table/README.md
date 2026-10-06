@@ -1,7 +1,7 @@
 # Consolidated supplementary data table
 
-`MOR_DMS_supplementary_data.xlsx` — one workbook, eight sheets plus a `00_README`
-index. `csv/` holds the same eight sheets as flat CSVs for programmatic use.
+`MOR_DMS_supplementary_data.xlsx` — one workbook, nine sheets plus a `00_README`
+index. `csv/` holds the same nine sheets as flat CSVs for programmatic use.
 Rebuild with `python3 build_supplementary_table.py` (reads only from `../data/`).
 
 | Sheet | Grain | Rows × cols |
@@ -12,8 +12,9 @@ Rebuild with `python3 build_supplementary_table.py` (reads only from `../data/`)
 | `04_position_lof_gof` | position × ligand | 5,985 × 8 |
 | `05_ligand_summary` | ligand | 15 × 20 |
 | `06_ligand_contacts` | position × ligand | 4,517 × 6 |
-| `07_validation_pharmacology` | variant × ligand | 56 × 17 |
+| `07_validation_pharmacology` | variant × ligand (fitted) | 148 × 20 |
 | `08_screen_samples` | sorted bin | 532 × 12 |
+| `09_validation_trupath_points` | individual replicate point | 8,879 × 11 |
 
 Grains are deliberately separate. Variants, positions, ligands and sorted samples are
 different units of observation; flattening them into one file would either duplicate
@@ -128,18 +129,54 @@ given in the manuscript Methods.
 
 ## 07_validation_pharmacology
 
-The A119L double-mutant TRUPATH Gi1 series (figures 8e–f, supplemental figure 11a).
-`activation_window` = −`span_used`; `pct_activation_vs_WT_DAMGO` = window ÷ the wild-type
-DAMGO window × 100, the exact quantity plotted in figure 8. `span_used` is set to 0 when
-the extra-sum-of-squares F-test against a flat line gives p ≥ 0.05 (`responsive = False`).
-A small **negative** percentage means a significant but *upward* curve was fit — a
-non-activating variant, not a measurement of negative efficacy.
+Fitted parameters for **all** low-throughput TRUPATH Gi1 BRET in the paper: the
+single-mutant series behind figure 7d–f and the A119L double-mutant series behind
+figures 8d/f/g and supplemental figure 11a. 148 curves over 9 ligands and 22 variants.
+The individual points behind every one of these fits are in sheet `09`.
+
+`pipeline` says which analysis produced the row, and this matters because **the two
+pipelines normalise differently**:
+
+| `pipeline` | Normalisation | Figures |
+|---|---|---|
+| `singles` | each curve divided by its own fitted no-drug plateau | 7d–f |
+| `doubles` | the two runs co-scaled on their shared WT and A119L arms, not renormalised to DAMGO | 8d, 8f, 8g, S11a |
+
+`activation_window` = −Span, the depth of the signal-down curve.
+`pct_activation_vs_WT_DAMGO` is computed **within each source**, against that source's own
+WT + DAMGO window, so values are comparable inside a pipeline but should not be compared
+across pipelines without care. `responsive` is the extra-sum-of-squares F test against a
+flat line; where it is False the window is reported as 0 for the doubles. A small negative
+percentage means a significant but upward, non-activating curve, not negative efficacy.
+
+> **One raw run appears twice, under both normalisations.** The 20260427 experiment is
+> `source = doubles_raw` in the singles pipeline and part of `doubles1+doubles2` in the
+> doubles pipeline. These are the same wells analysed two ways, not independent
+> measurements. Filter on `pipeline` before aggregating.
 
 ## 08_screen_samples
 
 Per-sorted-bin metadata for every DMS screen: assay, date, replicate, ligand and
 concentration, bin, and mean/median sequencing coverage. Supports supplemental figures
 2h–i and documents which raw count file each bin corresponds to.
+
+## 09_validation_trupath_points
+
+Every individual replicate point behind sheet `07`, one row per
+pipeline × source × ligand × variant × concentration × replicate. 8,879 points.
+
+| Column | Meaning |
+|---|---|
+| `pipeline`, `source`, `run` | Which analysis and which experimental run |
+| `ligand`, `variant`, `is_double` | What was measured |
+| `log10_conc_M`, `replicate` | Dose and biological replicate |
+| `raw_bret` | Unnormalised BRET ratio (515/410). **Singles only** |
+| `normalized` | The value plotted. Singles: raw ÷ `divisor`. Doubles: the co-scaled response extracted from Prism |
+| `divisor` | The fitted no-drug plateau used to normalise that curve. Singles only |
+
+`raw_bret` and `divisor` are empty for the doubles because those points were extracted
+from the Prism projects after normalisation; the unnormalised values are not recoverable
+from the deposited files.
 
 ---
 
