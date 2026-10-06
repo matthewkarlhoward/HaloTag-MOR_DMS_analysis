@@ -102,20 +102,6 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 | S11 | a | `figure_S11/code/supp_doubles.py` | |
 | S11 | b | — | flow-cytometry surface expression (Prism) |
 
-## Running the code
-
-Scripts were written to run inside the original analysis repository and reference their
-inputs either by absolute path (`/Users/mkh/GitHub/mor_dms_analysis/...`) or by walking up
-from their own location (`Path(__file__).resolve().parents[N]`). They are copied here
-**verbatim**, so paths must be repointed at `data/` before re-running. Each figure README
-lists the original repository path of every script together with the inputs it reads.
-
-Requirements: Python 3.11 (numpy, pandas, scipy, matplotlib, openpyxl, adjustText, pyarrow, pyyaml) and
-R 4.3 (tidyverse, patchwork, dendextend, ggrepel, colorspace, scales). Structure panels
-additionally need ChimeraX 1.7+.
-
-Figure style throughout: Helvetica 6 pt, black text, 0.5 pt rules, vector PDF with
-`pdf.fonttype = 42`.
 
 ## What is not here
 
