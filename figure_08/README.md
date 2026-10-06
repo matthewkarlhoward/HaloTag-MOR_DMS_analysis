@@ -22,11 +22,16 @@ Network definition:
 | 3 | ChimeraX | — | the `.cxc` files | per-class PNG renders |
 | 4 | `code/build_class_grid_merged.py` / `build_class_grid_variants.py` | `network_tools/` | the PNGs | stitched class grid |
 
-**Two gotchas, both preserved deliberately.**
-1. The LOF/GOF labels in the `.cxc` filenames are **swapped** relative to
-   `shared/network_analysis_shared.R`: `class_lof_*.cxc` carries the shared script's
-   `count_gof_2sd_surf` data and vice versa. Verified against the class-sharing summary.
-2. ChimeraX renders need `windowsize 1600 1200` (matching the save aspect) or the 2D title
+**Labelling, checked.** Each `class_{lof,gof}_*.cxc` loads the matching
+`{lof,gof}_*.defattr` and `.pb`, and the attribute files genuinely hold what their names
+say: correlating every deposited `*_count.defattr` against counts recomputed from
+`data/dms_scores/composite_dms_scores.csv` gives r = +0.51 to +0.72 for the LOF files
+against LOF and +0.83 to +0.93 for the GOF files against GOF, with the cross-terms
+negative in all eight cases. An earlier generation of these assets, under
+`network_tools/chimerax_scripts/classes/` in the working repository, did carry swapped
+labels; the merged set deposited here does not.
+
+**One gotcha.** ChimeraX renders need `windowsize 1600 1200` (matching the save aspect) or the 2D title
    clips and framing shifts run to run. macOS `--nogui` cannot render (no OpenGL) and
    `--offscreen` is Linux-only, so these must be run in the GUI.
 
@@ -53,8 +58,7 @@ script and one file.
 |---|---|---|---|
 | `code/rank_example_curves.py` | `plots/doubles/` | `data/pharmacology/doubles/doubles_merged_points.csv` | `panels/rank_example_curves.pdf` (91 x 97 mm, 2 x 2 grid) |
 
-Its docstring still describes WT vs A119L+V175N from an earlier version; the file it
-actually writes is the WT / A119L / K100N / A119L+K100N grid used in the figure.
+
 
 Both scripts use `code/drc_fit.py` for the F-test-gated sigmoid, and report activation as
 the window (-Span, 0 when the F-test fails) as a percentage of the wild-type DAMGO window.

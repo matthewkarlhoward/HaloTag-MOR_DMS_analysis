@@ -6,9 +6,9 @@ Two panels, four ligands each (DAMGO / PZM21 / Nalbuphine / Naloxone), coloured
 by efficacy class. Signal-down BRET (baseline 1, deeper = more activation), so
 curve depth = efficacy.
 
-  WT           : DAMGO > PZM21 > Nalbuphine > Naloxone  (textbook order)
-  A119L+V175N  : DAMGO > Nalbuphine > Naloxone > PZM21  (PZM21 falls to last;
-                 naloxone, a WT antagonist, is now a mid-rank agonist)
+Four panels: WT and A119L on the top row, K100N and A119L+K100N below. In WT the order
+is the textbook one, DAMGO > PZM21 > Nalbuphine > Naloxone; on the A119L backgrounds it
+reorders, with naloxone, a WT antagonist, becoming a mid-rank agonist.
 
 Curves are the F-test-gated fits with mean +/- SEM points.
 Source: figures/doubles_merged_points.csv
