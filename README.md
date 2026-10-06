@@ -115,8 +115,8 @@ table that nearly every figure script reads. Its column-by-column provenance is 
 
 ## Citation
 
-Cite both the paper and the archived repository. Author list and metadata are in
-`CITATION.cff`; the Zenodo DOI is in the badge above once published.
+If you use this code or data, cite the paper. Author list and metadata are in
+`CITATION.cff`.
 
 ## License
 

@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this software or data, please cite both the paper and the archived repository."
+message: "If you use this code or data, please cite the paper."
 title: "Code and data for: Distinct activation mechanisms underlie ligand efficacy at a GPCR"
 abstract: >-
   Code and input data reproducing every figure in a deep mutational pharmacology
