@@ -1,0 +1,20 @@
+log(agonist) vs. response (three parameters),,,
+Best-fit values,,,
+     Bottom,0.1991,,0.2040
+     Top,0.1576,,0.1237
+     LogEC50,-7.694,,-4.356
+     EC50,2.023e-008,,4.410e-005
+     Span,-0.04158,,-0.08028
+95% CI (profile likelihood),,,
+     Bottom,0.1944 to 0.2040,,0.2013 to 0.2067
+     Top,0.1509 to 0.1639,,-0.5116 to 0.1454
+     LogEC50,-8.210 to -7.153,,-4.781 to -2.927
+     EC50,6.168e-009 to 7.028e-008,,1.657e-005 to 0.001182
+Goodness of Fit,,,
+     Degrees of Freedom,63,,129
+     R squared,0.6435,,0.5820
+     Sum of Squares,0.01242,,0.02455
+     Sy.x,0.01404,,0.01380
+Number of points,,,
+     # of X values,252,,264
+     # Y values analyzed,66,,132

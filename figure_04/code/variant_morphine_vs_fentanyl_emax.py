@@ -9,7 +9,9 @@ anchored in BOTH ligands -- curve_type sigmoid, flat, or no_baseline.
     mean Emin -> 0 and mean Emax -> 1 (1 = WT-like efficacy, 0 = dead baseline).
   - x = Fentanyl Emax (Activity),  y = Morphine Emax (Activity)
 
-Points are colored by local 2-D density (gaussian KDE, magma, dense-on-top); a
+Point style is set by SCATTER_STYLE (see density_scatter.py): "alpha" (black
+points at low opacity, the default), "grey" (KDE density on a grey ramp) or
+"magma" (the original density colouring). A
 grey dotted y = x identity line is drawn for reference. Both axes tick every 0.5
 and label only the whole numbers.
 
@@ -18,14 +20,18 @@ variant_morphine_vs_fentanyl_ec50.py).
 
 Output: variant_morphine_vs_fentanyl_emax.pdf
 """
+import sys
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MultipleLocator, FuncFormatter
-from scipy.stats import gaussian_kde
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from density_scatter import draw_density, style_suffix   # noqa: E402
 
 plt.rcParams.update({
     "font.family": "Helvetica", "font.size": 6,
@@ -40,6 +46,7 @@ plt.rcParams.update({
     "xtick.major.width": 0.5, "ytick.major.width": 0.5,
     "xtick.major.size": 2, "ytick.major.size": 2,
     "lines.linewidth": 0.5, "patch.linewidth": 0.5,
+    "pdf.fonttype": 42,
 })
 MM = 1 / 25.4
 
@@ -61,11 +68,8 @@ def scatter_panel(x, y, xlab, ylab, out_pdf, tick_step=None):
     x, y = np.asarray(x, float), np.asarray(y, float)
     fig, ax = plt.subplots(figsize=(40 * MM, 40 * MM))
     diag(ax, x, y)
-    # Color by local 2-D density (gaussian KDE); draw dense points on top.
-    z = gaussian_kde(np.vstack([x, y]))(np.vstack([x, y]))
-    o = z.argsort()
-    ax.scatter(x[o], y[o], c=z[o], s=1, cmap="magma",
-               edgecolors="none", alpha=0.85, zorder=2)
+    # Background cloud: SCATTER_STYLE picks magma / grey density / black alpha.
+    draw_density(ax, x, y, s=1, zorder=2)
     setup(ax, xlab, ylab)
     if tick_step:
         # Tick every tick_step on both axes; label only every other tick (at
@@ -101,4 +105,5 @@ def _activity_miss(df, prefix):
 emax = _activity_miss(mor, "Mor").merge(_activity_miss(fen, "Fen"), on="hgvs")
 scatter_panel(emax.Fen_emax, emax.Mor_emax,
               r"E$_{max}$ Fentanyl", r"E$_{max}$ Morphine",
-              HERE / "variant_morphine_vs_fentanyl_emax.pdf", tick_step=0.5)
+              HERE / f"variant_morphine_vs_fentanyl_emax{style_suffix()}.pdf",
+              tick_step=0.5)

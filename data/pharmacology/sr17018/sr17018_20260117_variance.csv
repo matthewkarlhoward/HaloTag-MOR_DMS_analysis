@@ -1,0 +1,5 @@
+ligand,mean_pct_damgo,sd,cv_pct,between_plate_sd,within_plate_sd,read1_mean,read2_mean,read3_mean,read_order_signs
+Morphine,105.2,13.7,13,7.7,14.1,98.7,110.6,107.5,+-+-
+PZM21,80.2,18.3,23,15.3,15.2,73.7,87.9,77.7,+-+-
+Buprenorphine,65.0,22.5,35,12.8,23.9,50.0,72.6,79.9,++++
+SR17018,43.9,25.1,57,10.5,28.3,37.8,38.7,66.6,+-+-

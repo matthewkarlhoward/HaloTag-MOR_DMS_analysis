@@ -32,10 +32,11 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.patheffects as pe
 from matplotlib.ticker import MultipleLocator, FuncFormatter
-from scipy.stats import gaussian_kde
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE))
+from density_scatter import draw_density, style_suffix   # noqa: E402
 
 plt.rcParams.update({
     "font.family": "Helvetica", "font.size": 6,
@@ -55,12 +56,21 @@ plt.rcParams.update({
 MM = 1 / 25.4
 
 POSITION = 126
-# Highlight colour must clear two hurdles: it cannot collide with magma (black /
-# purple / orange / yellow) or the overlay vanishes into the density cloud, and
-# it cannot be blue or red, which mean "morphine bias" / "fentanyl bias" in the
-# neighbouring panels. That leaves the green-teal wedge. Override from argv[1].
+# Highlight colour. Under the old magma cloud it had to dodge black / purple /
+# orange / yellow as well as the blue and red that mean "morphine bias" /
+# "fentanyl bias" in the neighbouring panels, which left only the green-teal
+# wedge. With the greyscale cloud (SCATTER_STYLE=alpha|grey) any hue reads, and
+# red is no longer a clash but a match: Q126 is fentanyl-selective potency loss,
+# the same thing red encodes on the bias scale. Override from argv[1]; argv[2]
+# is an extra filename suffix. Rendered so far: #00A651 green (default),
+# #C44E52 (the divergence-panel red), #B2182B (the deeper bias-scale red).
 HILITE = sys.argv[1] if len(sys.argv) > 1 else "#00A651"
 OUT_SUFFIX = sys.argv[2] if len(sys.argv) > 2 else ""
+
+# Overlay marker size. HILITE_SCALE is a DIAMETER factor, which is what reads as
+# "n times larger" on the page; matplotlib's s is an area, hence the square.
+HILITE_SCALE = float(os.environ.get("HILITE_SCALE", 1.5))
+HILITE_S = 4 * HILITE_SCALE ** 2          # 4 pt^2 = the original marker
 
 # Halo profile: (stroke width pt, alpha), widest/faintest drawn first. A handful
 # of steps bands visibly under magnification, so the default ramps many thin
@@ -104,17 +114,14 @@ def scatter_panel(df, hit, xlab, ylab, out_pdf, tick_step=1, annotate=True):
     fig.set_size_inches(40 * MM, 40 * MM)
     diag(ax, x, y)
 
-    # Background: color by local 2-D density (gaussian KDE), dense points on top.
-    z = gaussian_kde(np.vstack([x, y]))(np.vstack([x, y]))
-    o = z.argsort()
-    ax.scatter(x[o], y[o], c=z[o], s=1, cmap="magma",
-               edgecolors="none", alpha=0.85, zorder=2)
+    # Background cloud: SCATTER_STYLE picks magma / grey density / black alpha.
+    draw_density(ax, x, y, s=1, zorder=2)
 
     # Overlay: every variant at the highlighted position. Behind each marker sit
     # nested white strokes, widest and faintest first, so the halo fades out
     # instead of ending on a hard rim. A true blur would need an agg filter,
     # which rasterises; stacked strokes keep the panel vector.
-    ov = ax.scatter(hit.Fen, hit.Mor, s=4, facecolors=HILITE,
+    ov = ax.scatter(hit.Fen, hit.Mor, s=HILITE_S, facecolors=HILITE,
                     edgecolors="black", linewidths=0.25, zorder=3)
     ov.set_path_effects(
         [pe.withStroke(linewidth=w, foreground="white", alpha=a)
@@ -170,5 +177,6 @@ for annotate in (True, False):
     stem = "variant_morphine_vs_fentanyl_ec50_q126"
     scatter_panel(ec50, hit,
                   r"EC$_{50}$ Fentanyl", r"EC$_{50}$ Morphine",
-                  HERE / f"{stem}{'' if annotate else '_plain'}{OUT_SUFFIX}.pdf",
+                  HERE / (f"{stem}{'' if annotate else '_plain'}"
+                          f"{style_suffix()}{OUT_SUFFIX}.pdf"),
                   tick_step=1, annotate=annotate)
