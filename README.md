@@ -8,7 +8,7 @@ Code and input data for every figure in:
 > Matthew K. Howard, Eve J. Fine, Karthik Srinivasan, Daniel D. Richman, Jerome
 > Freudenberg, Zara Weinberg, Jingyou Rao, Ziyue Zou, Christian Macdonald, Patrick
 > Rockefeller Grimes, Balazs R. Varga, James S. Fraser, Mark Von Zastrow, Susruta
-> Majumdar, Harold Pimentel, Justin English, Ron Dror, Aashish Manglik\*, Willow
+> Majumdar, Harold Pimentel, Justin English, Ron O. Dror, Aashish Manglik\*, Willow
 > Coyote-Maestas\*
 
 A deep mutational pharmacology study of the human μ-opioid receptor: roughly 400,000
