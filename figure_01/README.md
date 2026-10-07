@@ -18,11 +18,4 @@ histogram (+/- DAMGO eGFP distributions) was exported from FlowJo — workspace 
 `camp_vs_trupath_combined.R` are the single-panel and earlier combined variants of the
 same plot, kept for reference.
 
-**How the two Emax values are defined.** They are not computed the same way, and this is
-deliberate:
-* cAMP Emax — three-parameter Hill fit with slope fixed at 1, per ligand, asterisked
-  points dropped, reported as `Span` / DAMGO `Span` x 100.
-* TRUPATH Emax — peak of the per-dose *mean* activity (1 − normalised BRET), as % of the
-  DAMGO peak. Not a fit parameter.
-
 Spearman rho = 0.72 (Emax) and 0.94 (EC50).
