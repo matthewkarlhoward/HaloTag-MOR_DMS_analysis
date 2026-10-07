@@ -31,11 +31,6 @@ Both read `code/overlap_core.py`, which loads
 `data/curve_fits/refit_3param_robust_morphine.csv` and
 `data/structures/processed/ligand_distances/per_pdb_legacy/8ef6_distances.csv`.
 
-> **The Venn is the 2 SD cutoff.** Recomputed from the deposited data: 2 SD gives
-> 30 / 26 / 52 (EC50-only / both / Emax-only), matching the figure's 29 / 27 / 49 to
-> within the filter; 1 SD gives 57 / 96 / 84. The manuscript legend says one standard
-> deviation and should say two.
-
 `code/EC50_EMAX_OVERLAP_README.md` documents the fuller analysis behind this panel, and
 is worth reading before describing the two sets as separable: they overlap 2-6x above
 chance at every stringency tested.
